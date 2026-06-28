@@ -1,0 +1,162 @@
+/**
+ * Drag Handler with Mochi-Stretch Physics
+ * Manages dragging the window and applying elastic stretch transformations.
+ */
+class DragHandler {
+  constructor(renderer) {
+    this.renderer = renderer;
+    this.container = document.getElementById('pet-container');
+    
+    this.isDragging = false;
+    this.startX = 0;
+    this.startY = 0;
+    
+    // Position of window when drag started
+    this.winStartX = 0;
+    this.winStartY = 0;
+    
+    // For velocity calculation (stretch physics)
+    this.lastX = 0;
+    this.lastY = 0;
+    this.lastTime = 0;
+    this.vx = 0;
+    this.vy = 0;
+    
+    this.setupEvents();
+  }
+
+  setupEvents() {
+    this.container.addEventListener('pointerdown', (e) => {
+      // Do not drag if clicking the settings gear
+      if (e.target.closest('#settings-gear')) {
+        return;
+      }
+      
+      // Only drag on left click
+      if (e.button !== 0) return;
+      
+      this.isDragging = true;
+      this.container.setPointerCapture(e.pointerId);
+      
+      // Record initial mouse screen position (via screen because window moves)
+      this.startX = e.screenX;
+      this.startY = e.screenY;
+      
+      // Store current window position
+      this.winStartX = window.screenX;
+      this.winStartY = window.screenY;
+      
+      this.lastX = e.screenX;
+      this.lastY = e.screenY;
+      this.lastTime = Date.now();
+      this.vx = 0;
+      this.vy = 0;
+      
+      // Enter grabbed state
+      this.renderer.stateMachine.setState('grabbed');
+      this.renderer.stateMachine.resetInactivity();
+      
+      e.stopPropagation();
+    });
+
+    this.container.addEventListener('pointermove', (e) => {
+      if (!this.isDragging) return;
+      
+      const now = Date.now();
+      const dt = Math.max(1, now - this.lastTime);
+      
+      // Screen delta
+      const dx = e.screenX - this.startX;
+      const dy = e.screenY - this.startY;
+      
+      // Calculate instantaneous velocity
+      const dMouseX = e.screenX - this.lastX;
+      const dMouseY = e.screenY - this.lastY;
+      this.vx = dMouseX / dt;
+      this.vy = dMouseY / dt;
+      
+      this.lastX = e.screenX;
+      this.lastY = e.screenY;
+      this.lastTime = now;
+      
+      // Move window to match drag
+      const targetX = this.winStartX + dx;
+      const targetY = this.winStartY + dy;
+      
+      // Update window bounds in main process
+      if (window.api) {
+        window.api.savePosition({ x: targetX, y: targetY });
+      }
+      
+      // Apply elastic mochi stretch
+      this.applyMochiStretch();
+      
+      this.renderer.stateMachine.resetInactivity();
+    });
+
+    this.container.addEventListener('pointerup', (e) => {
+      if (!this.isDragging) return;
+      
+      this.isDragging = false;
+      this.container.releasePointerCapture(e.pointerId);
+      
+      // Check if mouse is still hovering over the container
+      const rect = this.container.getBoundingClientRect();
+      const isInside = (
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom
+      );
+      if (!isInside && window.api) {
+        window.api.setIgnoreMouseEvents(true, true);
+      }
+      
+      // Transition back to idle
+      this.renderer.stateMachine.setState('idle');
+      this.renderer.stateMachine.resetInactivity();
+    });
+  }
+
+  onGrabbedEnter() {
+    this.container.classList.add('grabbed-active');
+  }
+
+  onGrabbedExit() {
+    this.container.classList.remove('grabbed-active');
+    
+    // Bouncy spring back effect
+    const svg = this.container.querySelector('svg');
+    if (svg) {
+      svg.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35)';
+      svg.style.transform = 'scale(1)';
+      
+      // Clear inline style after transition completes
+      setTimeout(() => {
+        if (this.renderer.stateMachine.currentStateName !== 'grabbed') {
+          svg.style.transition = '';
+          svg.style.transform = '';
+        }
+      }, 300);
+    }
+  }
+
+  applyMochiStretch() {
+    const svg = this.container.querySelector('svg');
+    if (!svg) return;
+    
+    // Stretch factor based on vertical speed (max stretch of 1.4)
+    const stretchSpeed = Math.abs(this.vy);
+    const scaleY = 1.0 + Math.min(stretchSpeed * 1.5, 0.4);
+    
+    // Compress width to conserve volume (mochi principle)
+    const scaleX = 1.0 - Math.min(stretchSpeed * 0.8, 0.2);
+    
+    // Skew based on horizontal speed (max skew 15 degrees)
+    const skewSpeed = this.vx;
+    const skewX = Math.max(-15, Math.min(skewSpeed * 40, 15));
+    
+    // Apply transformations
+    svg.style.transform = `scale(${scaleX}, ${scaleY}) skewX(${skewX}deg)`;
+  }
+}

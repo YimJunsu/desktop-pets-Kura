@@ -1,0 +1,47 @@
+{
+  "name": "kuro-pet",
+  "version": "1.0.0",
+  "description": "Claude Code Octopus Desktop Pet",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "publish": "electron-builder --publish always"
+  },
+  "keywords": [
+    "electron",
+    "desktop-pet",
+    "claude-code"
+  ],
+  "author": "Kura",
+  "license": "MIT",
+  "dependencies": {
+    "electron-store": "^8.2.0",
+    "electron-updater": "^6.1.4",
+    "uiohook-napi": "^1.5.5"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.kuro.desktop-pet",
+    "productName": "Kuro Desktop Pet",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "rullerzhou-afk",
+      "repo": "clawd-on-desk"
+    }
+  }
+}

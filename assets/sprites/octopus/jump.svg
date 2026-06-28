@@ -1,0 +1,29 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.15" />
+    </filter>
+  </defs>
+  <style>
+    .jump-pet {
+      transform: scaleY(1.15) scaleX(0.85);
+      transform-origin: 12px 20px;
+    }
+  </style>
+  <g transform="translate(4, 4)">
+    <!-- White background outline silhouette -->
+    <g class="jump-pet" fill="#ffffff" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)">
+      <!-- Custom body path showing stretched look with legs pointing down together -->
+      <path d="M20.998 10.949H23v3.102h-2v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H1V10.95h2V5h17.998v5.949z" />
+    </g>
+    
+    <!-- Foreground coral color -->
+    <g class="jump-pet">
+      <path d="M20.998 10.949H23v3.102h-2v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H1V10.95h2V5h17.998v5.949z" fill="#D97757" />
+      
+      <!-- Looking up eyes -->
+      <rect x="6" y="6.5" width="1.488" height="2.847" fill="#000000" rx="0.2" ry="0.2" />
+      <rect x="16.51" y="6.5" width="1.49" height="2.847" fill="#000000" rx="0.2" ry="0.2" />
+    </g>
+  </g>
+</svg>

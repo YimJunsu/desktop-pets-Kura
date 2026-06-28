@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pet Settings</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: transparent;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+    }
+    .modal-content {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 20px;
+      width: 300px;
+      padding: 20px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+    }
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding-bottom: 8px;
+    }
+    .modal-header h3 {
+      margin: 0;
+      color: #D97757;
+      font-size: 15px;
+      font-weight: bold;
+    }
+    .close-modal {
+      cursor: pointer;
+      font-size: 20px;
+      color: #6b7280;
+      font-weight: bold;
+      line-height: 1;
+      transition: color 0.2s ease;
+    }
+    .close-modal:hover {
+      color: #D97757;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: bold;
+      color: #8b5cf6;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 0 8px 0;
+    }
+    .pet-cards {
+      display: flex;
+      gap: 12px;
+    }
+    .pet-card {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.6);
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .pet-card:hover {
+      border-color: #D97757;
+      transform: translateY(-1px);
+    }
+    .pet-card.selected {
+      border-color: #D97757;
+      background: rgba(217, 119, 87, 0.08);
+      box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.15);
+    }
+    .card-preview {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 48px;
+    }
+    .card-name {
+      font-size: 10px;
+      font-weight: bold;
+      color: #374151;
+    }
+    
+    /* Size button group */
+    .size-group {
+      display: flex;
+      gap: 8px;
+    }
+    .size-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 6px 0;
+      font-size: 11px;
+      font-weight: bold;
+      color: #4b5563;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .size-btn:hover {
+      border-color: #D97757;
+      color: #D97757;
+    }
+    .size-btn.selected {
+      background: #D97757;
+      color: white;
+      border-color: #D97757;
+      box-shadow: 0 2px 6px rgba(217, 119, 87, 0.25);
+    }
+    
+    /* Toggle checkboxes */
+    .toggle-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .toggle-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 11px;
+      color: #374151;
+      font-weight: 500;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 32px;
+      height: 18px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .3s;
+      border-radius: 18px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 12px;
+      width: 12px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #D97757;
+    }
+    input:checked + .slider:before {
+      transform: translateX(14px);
+    }
+    
+    .save-btn {
+      background: #8b5cf6;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 0;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.2s ease;
+      box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2);
+    }
+    .save-btn:hover {
+      background: #7c3aed;
+    }
+  </style>
+</head>
+<body>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Pet Settings ⚙️</h3>
+      <span id="close-modal-btn" class="close-modal">&times;</span>
+    </div>
+    
+    <!-- 1. Pet Model -->
+    <div class="settings-section">
+      <div class="section-title">Character Model</div>
+      <div class="pet-cards">
+        <div class="pet-card" data-model="octopus">
+          <div class="card-preview">
+            <svg viewBox="0 0 32 32" width="48" height="48">
+              <g transform="translate(4,4)">
+                <path d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949z" fill="#D97757" />
+                <rect x="6" y="8.102" width="1.488" height="2.847" fill="#000000" />
+                <rect x="16.51" y="8.102" width="1.49" height="2.847" fill="#000000" />
+              </g>
+            </svg>
+          </div>
+          <div class="card-name">Octopus</div>
+        </div>
+        <div class="pet-card" data-model="derpcat">
+          <div class="card-preview">
+            <svg viewBox="0 0 32 32" width="48" height="48">
+              <g transform="translate(4,4)">
+                <path d="M 5 5 L 5 2 H 7 V 5 H 17 V 2 H 19 V 5 V 10 H 22 V 13 H 19 V 14 H 23 V 8 H 21 V 14 H 19 V 17 H 17 V 20 H 15 V 17 H 9 V 20 H 7 V 17 H 5 V 13 H 2 V 10 H 5 Z" fill="#1E1B18" />
+                <rect x="7" y="7" width="3" height="3" fill="#ffffff" />
+                <rect x="14" y="7" width="3" height="3" fill="#ffffff" />
+                <rect x="7" y="7" width="1.2" height="1.2" fill="#000" />
+                <rect x="15.8" y="8.8" width="1.2" height="1.2" fill="#000" />
+              </g>
+            </svg>
+          </div>
+          <div class="card-name">Derpy Cat</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 2. Pet Size -->
+    <div class="settings-section">
+      <div class="section-title">Size</div>
+      <div class="size-group">
+        <button class="size-btn" data-size="S">Small (S)</button>
+        <button class="size-btn" data-size="M">Medium (M)</button>
+        <button class="size-btn" data-size="L">Large (L)</button>
+      </div>
+    </div>
+    
+    <!-- 3. Toggles -->
+    <div class="settings-section">
+      <div class="section-title">Features</div>
+      <div class="toggle-list">
+        <div class="toggle-item">
+          <span>Mouse Follow (따라오기)</span>
+          <label class="switch">
+            <input type="checkbox" id="follow-toggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="toggle-item">
+          <span>Sleep Mode (낮잠 자기)</span>
+          <label class="switch">
+            <input type="checkbox" id="sleep-toggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 4. Save/Close -->
+    <button id="close-modal-btn" class="save-btn">Done (닫기)</button>
+  </div>
+
+  <script>
+    async function initSettings() {
+      if (!window.api) return;
+
+      const cards = document.querySelectorAll('.pet-card');
+      const sizeBtns = document.querySelectorAll('.size-btn');
+      const followToggle = document.getElementById('follow-toggle');
+      const sleepToggle = document.getElementById('sleep-toggle');
+      const closeBtn = document.getElementById('close-modal-btn');
+      const xBtn = document.getElementById('close-modal-btn-header'); // close icon if any
+
+      // Load settings
+      const settings = await window.api.getSettings();
+      
+      // 1. Model Select
+      const currentModel = settings.model || 'octopus';
+      cards.forEach(card => {
+        if (card.dataset.model === currentModel) card.classList.add('selected');
+        card.addEventListener('click', async () => {
+          cards.forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          await window.api.updateSettings('model', card.dataset.model);
+        });
+      });
+      
+      // 2. Size Select
+      const currentSize = settings.size || 'M';
+      sizeBtns.forEach(btn => {
+        if (btn.dataset.size === currentSize) btn.classList.add('selected');
+        btn.addEventListener('click', async () => {
+          sizeBtns.forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          await window.api.updateSettings('size', btn.dataset.size);
+        });
+      });
+      
+      // 3. Follow Toggle
+      followToggle.checked = !!settings.followMode;
+      followToggle.addEventListener('change', async () => {
+        await window.api.updateSettings('followMode', followToggle.checked);
+      });
+      
+      // 4. Sleep Toggle
+      sleepToggle.checked = !!settings.sleepMode;
+      sleepToggle.addEventListener('change', async () => {
+        await window.api.updateSettings('sleepMode', sleepToggle.checked);
+      });
+
+      // Close handlers
+      const closeWindow = () => window.api.closeSettings();
+      closeBtn.addEventListener('click', closeWindow);
+      document.getElementById('close-modal-btn').addEventListener('click', closeWindow);
+      
+      const headerClose = document.querySelector('.close-modal');
+      if (headerClose) headerClose.addEventListener('click', closeWindow);
+    }
+
+    window.addEventListener('DOMContentLoaded', initSettings);
+  </script>
+</body>
+</html>

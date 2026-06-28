@@ -1,0 +1,28 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1" flood-color="#000" flood-opacity="0.18" />
+    </filter>
+  </defs>
+  <style>
+    .sit-pet {
+      transform: scaleY(0.85) scaleX(1.03);
+      transform-origin: 12px 20px;
+    }
+  </style>
+  <g transform="translate(4, 4)">
+    <!-- White background outline silhouette -->
+    <g class="sit-pet" fill="#ffffff" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)">
+      <path d="M20.998 10.949H24v3.102h-3v3.028h-1.487V19.5H18v-2.421h-1.487V19.5H15v-2.421H9V19.5H7.488v-2.421H6V19.5H4.487v-2.421H3V14.05H0V10.95h3V5h17.998v5.949z" />
+    </g>
+    
+    <!-- Foreground coral color -->
+    <g class="sit-pet">
+      <path d="M20.998 10.949H24v3.102h-3v3.028h-1.487V19.5H18v-2.421h-1.487V19.5H15v-2.421H9V19.5H7.488v-2.421H6V19.5H4.487v-2.421H3V14.05H0V10.95h3V5h17.998v5.949z" fill="#D97757" />
+      
+      <!-- Calm relaxed eyes -->
+      <rect x="6" y="8.8" width="1.488" height="2.0" fill="#000000" rx="0.2" ry="0.2" />
+      <rect x="16.51" y="8.8" width="1.49" height="2.0" fill="#000000" rx="0.2" ry="0.2" />
+    </g>
+  </g>
+</svg>

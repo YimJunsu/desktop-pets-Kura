@@ -1,0 +1,50 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1" flood-color="#000" flood-opacity="0.18" />
+    </filter>
+  </defs>
+  <style>
+    @keyframes tilt {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(-1deg); }
+    }
+    @keyframes dot-fade {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+    .thinking-pet {
+      animation: tilt 2.5s infinite ease-in-out;
+      transform-origin: 12px 20px;
+    }
+    .dot1 { animation: dot-fade 1.2s infinite; animation-delay: 0s; }
+    .dot2 { animation: dot-fade 1.2s infinite; animation-delay: 0.3s; }
+    .dot3 { animation: dot-fade 1.2s infinite; animation-delay: 0.6s; }
+  </style>
+  <g transform="translate(4, 4)">
+    <!-- White background outline silhouette -->
+    <g class="thinking-pet" fill="#ffffff" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)">
+      <path d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949z" />
+    </g>
+    
+    <!-- Foreground coral color -->
+    <g class="thinking-pet">
+      <path d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949z" fill="#D97757" />
+      
+      <!-- Looking up eyes -->
+      <rect x="6.0" y="7.0" width="1.488" height="2.847" fill="#000000" rx="0.2" ry="0.2" />
+      <rect x="16.51" y="7.0" width="1.49" height="2.847" fill="#000000" rx="0.2" ry="0.2" />
+    </g>
+
+    <!-- Thought bubble (stands still or tilts less) -->
+    <!-- Small dots leading to cloud -->
+    <circle cx="21" cy="4" r="0.6" fill="#fff" stroke="#D97757" stroke-width="0.5" />
+    <circle cx="23" cy="2.3" r="0.9" fill="#fff" stroke="#D97757" stroke-width="0.5" />
+    <!-- Main cloud bubble -->
+    <rect x="21" y="-4" width="7" height="4.5" rx="1.8" fill="#ffffff" stroke="#D97757" stroke-width="0.6" />
+    <!-- Three small dots inside cloud -->
+    <circle class="dot1" cx="23" cy="-1.8" r="0.4" fill="#000" />
+    <circle class="dot2" cx="24.5" cy="-1.8" r="0.4" fill="#000" />
+    <circle class="dot3" cx="26" cy="-1.8" r="0.4" fill="#000" />
+  </g>
+</svg>

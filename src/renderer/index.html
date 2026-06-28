@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Kuro Desktop Pet</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Chat Bubble (Phase 6) -->
+    <div id="chat-container" class="hidden">
+      <div id="chat-bubble">
+        <div id="chat-messages"></div>
+        <div id="chat-input-area" class="hidden">
+          <input type="text" id="chat-input" placeholder="Type a message..." />
+          <button id="chat-send-btn">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pet Sprite Container -->
+    <div id="pet-container">
+      <!-- Settings Gear (Hover UI) -->
+      <div id="settings-gear">⚙️</div>
+      <!-- Inline SVG will be injected here by animation.js -->
+    </div>
+
+  <!-- Scripts -->
+  <script src="state-machine.js"></script>
+  <script src="animation.js"></script>
+  <script src="eye-tracker.js"></script>
+  <script src="drag-handler.js"></script>
+  <script src="follow-mode.js"></script>
+  <script src="chat-bubble.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

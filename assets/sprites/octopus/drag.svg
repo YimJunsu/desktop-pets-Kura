@@ -1,0 +1,36 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2.5" stdDeviation="1.5" flood-color="#000" flood-opacity="0.15" />
+    </filter>
+  </defs>
+  <style>
+    @keyframes dangle {
+      0%, 100% { transform: rotate(-2deg); }
+      50% { transform: rotate(2deg); }
+    }
+    .drag-pet {
+      transform: scaleY(1.3) scaleX(0.78);
+      transform-origin: 12px 0px; /* stretch from the top where it's grabbed */
+      animation: dangle 0.8s infinite ease-in-out;
+    }
+    .dangling-leg {
+      transform-origin: center top;
+    }
+  </style>
+  <g transform="translate(4, 4)">
+    <!-- White background outline silhouette -->
+    <g class="drag-pet" fill="#ffffff" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)">
+      <path d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20.5H18v-3.421h-1.487V20.5H15v-3.421H9V20.5H7.488v-3.421H6V20.5H4.487v-3.421H3V14.05H0V10.95h3V5h17.998v5.949z" />
+    </g>
+    
+    <!-- Foreground coral color -->
+    <g class="drag-pet">
+      <path d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20.5H18v-3.421h-1.487V20.5H15v-3.421H9V20.5H7.488v-3.421H6V20.5H4.487v-3.421H3V14.05H0V10.95h3V5h17.998v5.949z" fill="#D97757" />
+      
+      <!-- Surprised wide-open eyes -->
+      <rect x="6.3" y="8.8" width="0.8" height="1.4" fill="#000000" rx="0.1" ry="0.1" />
+      <rect x="16.8" y="8.8" width="0.8" height="1.4" fill="#000000" rx="0.1" ry="0.1" />
+    </g>
+  </g>
+</svg>

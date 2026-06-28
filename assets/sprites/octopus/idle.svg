@@ -1,0 +1,40 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1" flood-color="#000" flood-opacity="0.2" />
+    </filter>
+  </defs>
+  <style>
+    @keyframes blink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+    .eye {
+      transform-origin: center;
+      animation: blink 4s infinite;
+      transition: transform 0.1s ease-out;
+    }
+  </style>
+  <g id="pet-body" transform="translate(4, 4)">
+    <!-- Sticker background (white thick outline) -->
+    <path d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949z" 
+          fill="#ffffff" 
+          stroke="#ffffff" 
+          stroke-width="1.6" 
+          stroke-linejoin="round" 
+          stroke-linecap="round"
+          filter="url(#shadow)" />
+    
+    <!-- Coral main body -->
+    <path d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949z" 
+          fill="#D97757" />
+
+    <!-- Eyes (separate for DOM selection & eye tracking) -->
+    <g id="eyes">
+      <!-- Left Eye -->
+      <rect id="left-eye" class="eye" x="6" y="8.102" width="1.488" height="2.847" fill="#000000" rx="0.2" ry="0.2" />
+      <!-- Right Eye -->
+      <rect id="right-eye" class="eye" x="16.51" y="8.102" width="1.49" height="2.847" fill="#000000" rx="0.2" ry="0.2" />
+    </g>
+  </g>
+</svg>

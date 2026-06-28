@@ -1,0 +1,45 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000" flood-opacity="0.18" />
+    </filter>
+  </defs>
+  <style>
+    @keyframes flail {
+      0%, 100% { transform: translateY(0px) rotate(-2deg); }
+      50% { transform: translateY(0.5px) rotate(2deg); }
+    }
+    .falling-pet {
+      animation: flail 0.15s infinite ease-in-out;
+      transform-origin: 12px 10px;
+    }
+    .leg-outer { transform: rotate(-10deg); transform-origin: 5px 17px; }
+    .leg-inner-l { transform: rotate(-5deg); transform-origin: 8px 17px; }
+    .leg-inner-r { transform: rotate(5deg); transform-origin: 15px 17px; }
+    .leg-outer-r { transform: rotate(10deg); transform-origin: 19px 17px; }
+  </style>
+  <g transform="translate(4, 4)">
+    <!-- White background outline silhouette -->
+    <g class="falling-pet" fill="#ffffff" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)">
+      <!-- Main body (slightly raised arms) -->
+      <path d="M21 17.079H3V12.05H0v-3.1h3V5h18v3.95h3v3.1h-3z" />
+      <rect class="leg-outer" x="4.487" y="17.079" width="1.513" height="2.921" />
+      <rect class="leg-inner-l" x="7.488" y="17.079" width="1.512" height="2.921" />
+      <rect class="leg-inner-r" x="15" y="17.079" width="1.513" height="2.921" />
+      <rect class="leg-outer-r" x="18" y="17.079" width="1.513" height="2.921" />
+    </g>
+    
+    <!-- Foreground coral color -->
+    <g class="falling-pet">
+      <path d="M21 17.079H3V12.05H0v-3.1h3V5h18v3.95h3v3.1h-3z" fill="#D97757" />
+      <rect class="leg-outer" x="4.487" y="17.079" width="1.513" height="2.921" fill="#D97757" />
+      <rect class="leg-inner-l" x="7.488" y="17.079" width="1.512" height="2.921" fill="#D97757" />
+      <rect class="leg-inner-r" x="15" y="17.079" width="1.513" height="2.921" fill="#D97757" />
+      <rect class="leg-outer-r" x="18" y="17.079" width="1.513" height="2.921" fill="#D97757" />
+      
+      <!-- Startled small square eyes -->
+      <rect x="6.3" y="9" width="0.9" height="0.9" fill="#000000" />
+      <rect x="16.8" y="9" width="0.9" height="0.9" fill="#000000" />
+    </g>
+  </g>
+</svg>

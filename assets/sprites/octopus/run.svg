@@ -1,0 +1,61 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1" flood-color="#000" flood-opacity="0.2" />
+    </filter>
+  </defs>
+  <style>
+    @keyframes bob-run {
+      0%, 100% { transform: translateY(0px) rotate(5deg); }
+      50% { transform: translateY(0.8px) rotate(5deg); }
+    }
+    @keyframes swing-left-run {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-2px); }
+    }
+    @keyframes swing-right-run {
+      0%, 100% { transform: translateY(-2px); }
+      50% { transform: translateY(0px); }
+    }
+    .runner-group {
+      transform-origin: 12px 18px;
+    }
+    .body-bob {
+      animation: bob-run 0.25s infinite ease-in-out;
+      transform-origin: 12px 17px;
+    }
+    .leg-left-pair {
+      animation: swing-left-run 0.25s infinite ease-in-out;
+    }
+    .leg-right-pair {
+      animation: swing-right-run 0.25s infinite ease-in-out;
+    }
+  </style>
+  <g transform="translate(4, 4)">
+    <!-- White background outline silhouette -->
+    <g class="runner-group" fill="#ffffff" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)">
+      <path class="body-bob" d="M21 17.079H3V14.05H0V10.95h3V5h18v5.95h3v3.1h-3z" />
+      <rect class="leg-left-pair" x="4.487" y="17.079" width="1.513" height="2.921" />
+      <rect class="leg-right-pair" x="7.488" y="17.079" width="1.512" height="2.921" />
+      <rect class="leg-left-pair" x="15" y="17.079" width="1.513" height="2.921" />
+      <rect class="leg-right-pair" x="18" y="17.079" width="1.513" height="2.921" />
+    </g>
+    
+    <!-- Foreground coral color -->
+    <g class="runner-group">
+      <path class="body-bob" d="M21 17.079H3V14.05H0V10.95h3V5h18v5.95h3v3.1h-3z" fill="#D97757" />
+      <rect class="leg-left-pair" x="4.487" y="17.079" width="1.513" height="2.921" fill="#D97757" />
+      <rect class="leg-right-pair" x="7.488" y="17.079" width="1.512" height="2.921" fill="#D97757" />
+      <rect class="leg-left-pair" x="15" y="17.079" width="1.513" height="2.921" fill="#D97757" />
+      <rect class="leg-right-pair" x="18" y="17.079" width="1.513" height="2.921" fill="#D97757" />
+    </g>
+
+    <!-- Eyes (bob with body) -->
+    <g class="runner-group" fill="#000000">
+      <g class="body-bob">
+        <rect x="6" y="8.102" width="1.488" height="2.847" rx="0.2" ry="0.2" />
+        <rect x="16.51" y="8.102" width="1.49" height="2.847" rx="0.2" ry="0.2" />
+      </g>
+    </g>
+  </g>
+</svg>

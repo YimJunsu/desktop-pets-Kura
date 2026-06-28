@@ -1,0 +1,316 @@
+/* General styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  width: 100vw;
+  height: 100vh;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Pet Container */
+#pet-container {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 192px;
+  height: 192px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto; /* Allow mouse events on this container */
+  transition: width 0.2s ease, height 0.2s ease;
+}
+
+/* SVG wrapper styling */
+#pet-container > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  transition: transform 0.1s ease-out, filter 0.1s ease-out;
+  transform-origin: center bottom;
+}
+
+/* Horizontal flip for walking left */
+.flipped {
+  transform: scaleX(-1);
+}
+
+/* Grabbed state CSS spring effect (mochi stretch) */
+.grabbed-active {
+  transition: none !important; /* Disables transitions during live drag */
+}
+
+/* Chat bubble styling */
+#chat-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 230px; /* Leave space for pet */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#chat-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#chat-bubble {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 16px;
+  padding: 12px 16px;
+  max-width: 280px;
+  width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  pointer-events: auto; /* Clickable when visible */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Chat bubble arrow pointer pointing down to pet */
+#chat-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px 8px 0;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.88) transparent;
+  display: block;
+  width: 0;
+}
+
+#chat-messages {
+  max-height: 120px;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #1f2937;
+  word-break: break-word;
+  padding-right: 4px;
+}
+
+/* Custom scrollbar for chat messages */
+#chat-messages::-webkit-scrollbar {
+  width: 4px;
+}
+#chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+#chat-messages::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+  border-radius: 2px;
+}
+
+#chat-input-area {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+#chat-input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+#chat-input:focus {
+  border-color: #D97757;
+  box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.2);
+}
+
+#chat-send-btn {
+  background: #D97757;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+#chat-send-btn:hover {
+  background: #c25e3c;
+}
+
+/* Helpers */
+.hidden {
+  display: none !important;
+}
+
+/* Settings Gear */
+#settings-gear {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  z-index: 100;
+  pointer-events: auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+#pet-container:hover #settings-gear,
+#pet-container.hovered #settings-gear {
+  opacity: 1;
+}
+
+#settings-gear:hover {
+  transform: rotate(45deg) scale(1.15);
+  background: #ffffff;
+}
+
+/* Modal styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  width: 320px;
+  padding: 20px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transform: scale(0.9);
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+}
+
+.modal.visible .modal-content {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding-bottom: 8px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #D97757;
+  font-size: 16px;
+}
+
+.close-modal {
+  cursor: pointer;
+  font-size: 22px;
+  color: #6b7280;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.close-modal:hover {
+  color: #D97757;
+}
+
+.pet-cards {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.pet-card {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 15px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pet-card:hover {
+  border-color: #D97757;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(217, 119, 87, 0.12);
+}
+
+.pet-card.selected {
+  border-color: #D97757;
+  background: rgba(217, 119, 87, 0.08);
+  box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.2);
+}
+
+.card-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 64px;
+}
+
+.card-name {
+  font-size: 11px;
+  font-weight: bold;
+  color: #374151;
+}
