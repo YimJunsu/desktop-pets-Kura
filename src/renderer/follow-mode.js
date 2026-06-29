@@ -20,8 +20,8 @@ class FollowMode {
     
     // Movement constraints
     this.minFollowDistance = 150; // px
-    this.baseSpeed = 3; // px/frame
-    this.maxSpeed = 8; // px/frame
+    this.baseSpeed = 2; // px/frame
+    this.maxSpeed = 5; // px/frame
   }
 
   init() {

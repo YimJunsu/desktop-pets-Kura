@@ -27,7 +27,7 @@ class Animator {
     else if (name === 'sleeping') fileName = 'sleep';
     else if (name === 'grabbed') fileName = 'drag';
 
-    const model = this.renderer.settings.model || 'octopus';
+    const model = this.renderer.settings.model || 'clawd';
     const path = `../../assets/sprites/${model}/${fileName}.svg`;
     
     try {
@@ -111,6 +111,8 @@ class Animator {
     if (!window.api) return;
 
     const gear = document.getElementById('settings-gear');
+    const chatTrigger = document.getElementById('chat-trigger');
+    const chatContainer = document.getElementById('chat-container');
 
     window.api.onCursorMove((point) => {
       // 드래그 진행 중일 때는 마우스 이벤트를 뺏지 않음
@@ -120,8 +122,13 @@ class Animator {
 
       const isOverPet = this.isCursorOverElement(point, this.container);
       const isOverGear = gear ? this.isCursorOverElement(point, gear) : false;
+      const isOverChatTrigger = chatTrigger ? this.isCursorOverElement(point, chatTrigger) : false;
 
-      if (isOverPet || isOverGear) {
+      // 만약 채팅창이 보이고 마우스가 채팅창 위에 있다면
+      const isChatVisible = chatContainer && chatContainer.classList.contains('visible');
+      const isOverChatContainer = (isChatVisible && chatContainer) ? this.isCursorOverElement(point, chatContainer) : false;
+
+      if (isOverPet || isOverGear || isOverChatTrigger || isOverChatContainer) {
         this.container.classList.add('hovered');
         window.api.setIgnoreMouseEvents(false);
       } else {

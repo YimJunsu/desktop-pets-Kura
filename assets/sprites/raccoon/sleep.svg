@@ -1,0 +1,112 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.2" flood-color="#000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+  <style>
+    @keyframes blink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+    .eye {
+      transform-origin: center;
+      animation: blink 4s infinite;
+      transition: transform 0.1s ease-out;
+    }
+    
+      @keyframes breathe {
+        0%, 100% { transform: scaleY(0.96) translateY(0.5px); }
+        50% { transform: scaleY(1.02) translateY(-0.5px); }
+      }
+      .raccoon-body {
+        animation: breathe 3s infinite ease-in-out;
+        transform-origin: 16px 24px;
+      }
+    
+  </style>
+
+  <!-- White Sticker Outline for Contrast -->
+  <g transform="translate(4, 4)" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)">
+    <!-- Ears -->
+    <path d="M 8 7 L 5 1.5 L 11 3.5 Z M 24 7 L 27 1.5 L 21 3.5 Z" />
+    <!-- Body -->
+    <rect x="7" y="15" width="18" height="9" rx="4.5" />
+    <!-- Tail -->
+    <path d="M 23 18 C 27 18 29.5 14 26 9 C 23.5 12.5 22.5 16 23 18 Z" />
+    <!-- Head -->
+    <ellipse cx="16" cy="11.5" rx="9" ry="7.5" />
+  </g>
+
+  <!-- Main Raccoon Body Group -->
+  <g transform="translate(4, 4)" class="raccoon-body">
+    
+    <!-- Tail Segment 1 (Body side, grey) -->
+    <path d="M 23 18 C 24.5 18 25.5 17 25 15.5 C 24 16 23.5 17 23 18 Z" fill="#4b5563" stroke="#1E1B18" stroke-width="0.8" />
+    <!-- Tail Segment 2 (dark stripe) -->
+    <path d="M 25 15.5 C 26 15.5 26.8 14.5 26 13 C 25 14 24.5 15 25 15.5 Z" fill="#9ca3af" stroke="#1E1B18" stroke-width="0.8" />
+    <!-- Tail Segment 3 (grey) -->
+    <path d="M 26 13 C 27 13 28 12 27 11 C 26 11.8 25.2 12.5 26 13 Z" fill="#4b5563" stroke="#1E1B18" stroke-width="0.8" />
+    <!-- Tail Segment 4 (dark stripe) -->
+    <path d="M 27 11 C 28.5 11 29 10 27.5 9 C 26.5 9.8 26.2 10.5 27 11 Z" fill="#9ca3af" stroke="#1E1B18" stroke-width="0.8" />
+    <!-- Tail Tip (Segment 5, dark grey) -->
+    <path d="M 27.5 9 C 28.5 9 29.5 9.5 26 9 C 26 9 26.5 9 27.5 9 Z" fill="#4b5563" stroke="#1E1B18" stroke-width="0.8" />
+
+    <!-- Gray Body -->
+    <rect x="7" y="15" width="18" height="9" rx="4.5" fill="#9ca3af" stroke="#1E1B18" stroke-width="0.8" />
+
+    <!-- Jagged White Chest Fur -->
+    <path d="M 12 15 L 10 17.5 L 13 17.5 L 11 21 L 16 24.5 L 21 21 L 19 17.5 L 22 17.5 L 20 15 Z" fill="#f3f4f6" stroke="#1E1B18" stroke-width="0.8" stroke-linejoin="round" />
+
+    <!-- Legs & Paws (swing with animation) -->
+    <g class="left-legs">
+      <!-- Front Left Leg -->
+      <rect x="9" y="21" width="2.5" height="4.5" rx="1.2" fill="#4b5563" stroke="#1E1B18" stroke-width="0.8" />
+      <!-- Rear Left Leg -->
+      <rect x="5.5" y="19" width="3.5" height="5.5" rx="1.7" fill="#9ca3af" stroke="#1E1B18" stroke-width="0.8" />
+    </g>
+    
+    <g class="right-legs">
+      <!-- Front Right Leg -->
+      <rect x="14.5" y="21" width="2.5" height="4.5" rx="1.2" fill="#4b5563" stroke="#1E1B18" stroke-width="0.8" />
+      <!-- Rear Right Leg -->
+      <rect x="17" y="19" width="3.5" height="5.5" rx="1.7" fill="#9ca3af" stroke="#1E1B18" stroke-width="0.8" />
+    </g>
+
+    <!-- Outer Ears (Gray) -->
+    <path d="M 8 7 L 5 1.5 L 11 3.5 Z" fill="#9ca3af" stroke="#1E1B18" stroke-width="0.8" stroke-linejoin="round" />
+    <path d="M 24 7 L 27 1.5 L 21 3.5 Z" fill="#9ca3af" stroke="#1E1B18" stroke-width="0.8" stroke-linejoin="round" />
+
+    <!-- Inner Ears (White/Light Gray) -->
+    <path d="M 8.5 6.5 L 6.5 3 L 10.5 4.5 Z" fill="#e5e7eb" />
+    <path d="M 23.5 6.5 L 25.5 3 L 21.5 4.5 Z" fill="#e5e7eb" />
+
+    <!-- Head Gray Base -->
+    <ellipse cx="16" cy="11.5" rx="9" ry="7.5" fill="#9ca3af" stroke="#1E1B18" stroke-width="0.8" />
+
+    <!-- Raccoon Dark Face Mask (Dark Grey) -->
+    <path d="M 8 13.5 C 6 12 11 8.5 13.5 9.5 C 14.5 10.5 13.5 13.8 8 13.5 Z" fill="#374151" stroke="#1E1B18" stroke-width="0.8" />
+    <path d="M 24 13.5 C 26 12 21 8.5 18.5 9.5 C 17.5 10.5 18.5 13.8 24 13.5 Z" fill="#374151" stroke="#1E1B18" stroke-width="0.8" />
+
+    <!-- White Muzzle -->
+    <ellipse cx="16" cy="13.2" rx="4.5" ry="3.2" fill="#f3f4f6" stroke="#1E1B18" stroke-width="0.8" />
+
+    <!-- Dynamic Eye Layer -->
+    
+      <!-- Sleeping/Closed Eyes -->
+      <path d="M 11 11.7 Q 12 12.3 13 11.7" fill="none" stroke="#1E1B18" stroke-width="1.2" stroke-linecap="round" />
+      <path d="M 19 11.7 Q 20 12.3 21 11.7" fill="none" stroke="#1E1B18" stroke-width="1.2" stroke-linecap="round" />
+    
+
+    <!-- Black Nose & Smiling Mouth -->
+    <polygon points="16,11.6 15,10.4 17,10.4" fill="#111827" />
+    <path d="M 14.5 12.8 Q 16 14.2 17.5 12.8" fill="none" stroke="#111827" stroke-width="1.0" stroke-linecap="round" />
+
+    <!-- State-specific decorations -->
+    
+      <!-- Floating Zzz -->
+      <text x="24" y="6" font-family="monospace" font-size="4" fill="#a78bfa" font-weight="bold">z</text>
+      <text x="27" y="3" font-family="monospace" font-size="5.5" fill="#8b5cf6" font-weight="bold">Z</text>
+    
+  </g>
+</svg>

@@ -5,7 +5,7 @@
   <title>Summoning Pet...</title>
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
       margin: 0;
       padding: 0;
       overflow: hidden;
@@ -17,48 +17,71 @@
       height: 100vh;
       user-select: none;
     }
+    
+    /* Acrylic Glassmorphic Premium Splash Card */
     .loading-card {
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 20px;
-      padding: 24px 32px;
+      background: rgba(15, 13, 22, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px 36px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    
     @keyframes popIn {
-      from { transform: scale(0.8); opacity: 0; }
+      from { transform: scale(0.95); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 4px solid rgba(217, 119, 87, 0.15);
-      border-top-color: #D97757;
-      border-radius: 50%;
-      animation: spin 1s infinite linear;
+    
+    /* Premium Thin Flow Progress Bar */
+    .progress-bar-container {
+      width: 140px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 1px;
+      overflow: hidden;
+      position: relative;
     }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    
+    .progress-bar-fill {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, #FF7E5F, #8B5CF6, transparent);
+      animation: loadFlow 1.6s infinite cubic-bezier(0.4, 0, 0.2, 1);
     }
+    
+    @keyframes loadFlow {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    /* Elegant High-Tech Typography */
     .text {
-      font-size: 15px;
-      font-weight: bold;
-      color: #374151;
-      letter-spacing: -0.3px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #94A3B8;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="loading-card">
-    <div class="spinner"></div>
-    <div class="text">펫 소환중! 🐙✨</div>
+    <div class="text">Kuro Desktop Pet</div>
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill"></div>
+    </div>
   </div>
 </body>
 </html>

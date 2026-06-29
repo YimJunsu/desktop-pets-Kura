@@ -3,32 +3,47 @@ $bmp = New-Object System.Drawing.Bitmap 32,32
 $g = [System.Drawing.Graphics]::FromImage($bmp)
 $g.Clear([System.Drawing.Color]::Transparent)
 
-$coral = [System.Drawing.Color]::FromArgb(217, 119, 87)
-$brush = New-Object System.Drawing.SolidBrush($coral)
-$whiteBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::White)
-$blackBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::Black)
+$dark = [System.Drawing.Color]::FromArgb(30, 27, 24)
+$white = [System.Drawing.Color]::White
+$pink = [System.Drawing.Color]::FromArgb(255, 182, 193)
+$black = [System.Drawing.Color]::Black
 
-# Draw white sticker outline
-$g.FillRectangle($whiteBrush, 3, 5, 26, 21)
-$g.FillRectangle($whiteBrush, 0, 10, 32, 8)
-$g.FillRectangle($whiteBrush, 5, 22, 4, 6)
-$g.FillRectangle($whiteBrush, 10, 22, 4, 6)
-$g.FillRectangle($whiteBrush, 18, 22, 4, 6)
-$g.FillRectangle($whiteBrush, 23, 22, 4, 6)
+$brushDark = New-Object System.Drawing.SolidBrush($dark)
+$brushWhite = New-Object System.Drawing.SolidBrush($white)
+$brushPink = New-Object System.Drawing.SolidBrush($pink)
+$brushBlack = New-Object System.Drawing.SolidBrush($black)
 
-# Draw coral body
-$g.FillRectangle($brush, 5, 7, 22, 17)
-$g.FillRectangle($brush, 2, 12, 28, 4)
-$g.FillRectangle($brush, 7, 20, 2, 6)
-$g.FillRectangle($brush, 12, 20, 2, 6)
-$g.FillRectangle($brush, 18, 20, 2, 6)
-$g.FillRectangle($brush, 23, 20, 2, 6)
+# Left Ear
+$g.FillRectangle($brushDark, 7, 4, 3, 4)
+$g.FillRectangle($brushPink, 8, 5, 1, 2)
 
-# Draw black eyes
-$g.FillRectangle($blackBrush, 9, 11, 2, 4)
-$g.FillRectangle($blackBrush, 21, 11, 2, 4)
+# Right Ear
+$g.FillRectangle($brushDark, 22, 4, 3, 4)
+$g.FillRectangle($brushPink, 23, 5, 1, 2)
+
+# Head/Body Center
+$g.FillRectangle($brushDark, 7, 8, 18, 14)
+$g.FillRectangle($brushDark, 4, 13, 24, 5)
+
+# Tail
+$g.FillRectangle($brushDark, 26, 10, 3, 8)
+$g.FillRectangle($brushDark, 28, 7, 2, 4)
+
+# White Paws
+$g.FillRectangle($brushWhite, 9, 22, 3, 3)
+$g.FillRectangle($brushWhite, 20, 22, 3, 3)
+$g.FillRectangle($brushDark, 9, 21, 3, 1)
+$g.FillRectangle($brushDark, 20, 21, 3, 1)
+
+# White Eyes
+$g.FillRectangle($brushWhite, 9, 11, 4, 4)
+$g.FillRectangle($brushWhite, 19, 11, 4, 4)
+
+# Black Pupils
+$g.FillRectangle($brushBlack, 9, 11, 2, 2)
+$g.FillRectangle($brushBlack, 21, 13, 2, 2)
 
 $bmp.Save("d:\desktop-pets-Kura\assets\tray-icon.png", [System.Drawing.Imaging.ImageFormat]::Png)
 $g.Dispose()
 $bmp.Dispose()
-write-host "Tray icon generated successfully!"
+write-host "BlackYang Tray icon generated successfully!"

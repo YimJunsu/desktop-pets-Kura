@@ -7,21 +7,24 @@
 </head>
 <body>
   <div id="app">
-    <!-- Chat Bubble (Phase 6) -->
+    <!-- AI Response Chat Bubble (Above Pet Head) -->
     <div id="chat-container" class="hidden">
       <div id="chat-bubble">
         <div id="chat-messages"></div>
-        <div id="chat-input-area" class="hidden">
-          <input type="text" id="chat-input" placeholder="Type a message..." />
-          <button id="chat-send-btn">Send</button>
-        </div>
       </div>
+    </div>
+
+    <!-- Chat Input Dialog Panel (Fixed Bottom Right) -->
+    <div id="chat-input-panel" class="hidden">
+      <input type="text" id="chat-input" placeholder="Type a message..." />
+      <button id="chat-send-btn">Send</button>
     </div>
 
     <!-- Pet Sprite Container -->
     <div id="pet-container">
-      <!-- Settings Gear (Hover UI) -->
-      <div id="settings-gear">⚙️</div>
+      <!-- Settings Gear & Chat Bubble (Hover UI) -->
+      <div id="settings-gear" title="Settings">⚙️</div>
+      <div id="chat-trigger" title="Chat">💬</div>
       <!-- Inline SVG will be injected here by animation.js -->
     </div>
 

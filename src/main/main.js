@@ -1,6 +1,16 @@
 const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
+
+// Expose V8 garbage collector and limit cache sizes to reduce idle memory footprints (max 130MB limit)
+app.commandLine.appendSwitch('disable-gpu-program-cache');
+app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
+app.commandLine.appendSwitch('js-flags', '--expose-gc --max-semi-space-size=1 --max-old-space-size=64');
+
+const { initDatabase, getSettings, updateSetting, dbPath } = require('./db');
+const { registerClaudeHooks } = require('../hooks/claude-code');
+const { registerClaudeDesktopHooks } = require('../hooks/claude-desktop');
 
 // Single Instance Application Lock
 const gotTheLock = app.requestSingleInstanceLock();
@@ -10,6 +20,7 @@ if (!gotTheLock) {
 }
 
 let mainWindow = null;
+let settingsData = {}; // Memory cache of SQLite settings
 
 app.on('second-instance', () => {
   if (mainWindow) {
@@ -18,43 +29,33 @@ app.on('second-instance', () => {
   }
 });
 
-// Initialize Electron Store
-let store;
-try {
-  const Store = require('electron-store');
+let cursorPollInterval = null;
+let currentPollIntervalMs = 80;
+
+function startCursorPolling(intervalMs) {
+  if (cursorPollInterval) clearInterval(cursorPollInterval);
+  currentPollIntervalMs = intervalMs;
   
-  // Load default settings
-  const defaultSettingsPath = path.join(__dirname, '../../config/default-settings.json');
-  let defaults = {};
-  if (fs.existsSync(defaultSettingsPath)) {
-    defaults = JSON.parse(fs.readFileSync(defaultSettingsPath, 'utf8'));
-  }
-  
-  store = new Store({ defaults });
-} catch (e) {
-  console.error('Failed to initialize electron-store:', e);
+  cursorPollInterval = setInterval(() => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      const point = screen.getCursorScreenPoint();
+      mainWindow.webContents.send('cursor-move', point);
+    }
+  }, intervalMs);
 }
 
-let cursorPollInterval = null;
-
 function getWindowSize(sizeStr) {
-  // We make the window larger than the pet to accommodate speech bubbles and animations
-  // S: Pet 128x128 -> Window 256x256
-  // M: Pet 192x192 -> Window 320x320
-  // L: Pet 256x256 -> Window 400x400
   switch (sizeStr) {
-    case 'S': return { width: 256, height: 256, petSize: 128 };
-    case 'L': return { width: 400, height: 400, petSize: 256 };
+    case 'S': return { width: 290, height: 300, petSize: 128 };
+    case 'L': return { width: 400, height: 460, petSize: 256 };
     case 'M':
     default:
-      return { width: 320, height: 320, petSize: 192 };
+      return { width: 320, height: 380, petSize: 192 };
   }
 }
 
 function clampToScreen(x, y, width, height) {
   const displays = screen.getAllDisplays();
-  
-  // Check if the window is visible on ANY of the screens
   let isVisible = false;
   for (const display of displays) {
     const bounds = display.bounds;
@@ -70,21 +71,17 @@ function clampToScreen(x, y, width, height) {
     }
   }
 
-  // If not visible on any screen, reset to primary display bottom-right
   if (!isVisible) {
     const primaryDisplay = screen.getPrimaryDisplay();
     const bounds = primaryDisplay.workArea;
     x = bounds.x + bounds.width - width - 20;
     y = bounds.y + bounds.height - height - 20;
   } else {
-    // Find the display nearest to the window center
     const nearestDisplay = screen.getDisplayNearestPoint({
       x: Math.round(x + width / 2),
       y: Math.round(y + height / 2)
     });
     const bounds = nearestDisplay.workArea;
-    
-    // Clamp to work area of this display
     x = Math.max(bounds.x, Math.min(x, bounds.x + bounds.width - width));
     y = Math.max(bounds.y, Math.min(y, bounds.y + bounds.height - height));
   }
@@ -93,19 +90,18 @@ function clampToScreen(x, y, width, height) {
 }
 
 function createMainWindow() {
-  const sizeSetting = store ? store.get('size') || 'M' : 'M';
+  const sizeSetting = settingsData.size || 'M';
   const { width, height } = getWindowSize(sizeSetting);
   
   let x = undefined;
   let y = undefined;
   
-  const savedPos = store ? store.get('position') : null;
+  const savedPos = settingsData.position || null;
   if (savedPos && typeof savedPos.x === 'number' && typeof savedPos.y === 'number') {
     const clamped = clampToScreen(savedPos.x, savedPos.y, width, height);
     x = clamped.x;
     y = clamped.y;
   } else {
-    // Default position: Bottom-right corner of primary display
     const primaryDisplay = screen.getPrimaryDisplay();
     const bounds = primaryDisplay.workArea;
     x = bounds.x + bounds.width - width - 20;
@@ -123,6 +119,7 @@ function createMainWindow() {
     resizable: false,
     hasShadow: false,
     skipTaskbar: true,
+    icon: path.join(__dirname, '../../assets/tray-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, '../preload.js'),
       nodeIntegration: false,
@@ -130,55 +127,51 @@ function createMainWindow() {
     }
   });
 
-  // Redirect renderer console to terminal for debugging
   mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
     console.error(`[Renderer Console]: ${message} (at ${path.basename(sourceId)}:${line})`);
   });
 
-  // Load HTML
   mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
-
-  // Start with click-through enabled
-  mainWindow.setIgnoreMouseEvents(true, { forward: true });
-
-  // Initialize global input hooks
-  const { setupGlobalInput } = require('./global-input');
-  setupGlobalInput(mainWindow);
-
-  // Start HTTP hook server for AI coding agents
-  const { startHookServer } = require('../hooks/hook-server');
-  startHookServer(mainWindow);
-
-  // Poll cursor position at 50ms interval and send to renderer
-  if (cursorPollInterval) clearInterval(cursorPollInterval);
-  cursorPollInterval = setInterval(() => {
-    if (!mainWindow || mainWindow.isDestroyed()) return;
-    const point = screen.getCursorScreenPoint();
-    mainWindow.webContents.send('cursor-move', point);
-  }, 50);
 
   mainWindow.on('closed', () => {
     mainWindow = null;
-    if (cursorPollInterval) {
-      clearInterval(cursorPollInterval);
-      cursorPollInterval = null;
-    }
-    // Stop global hooks
-    const { stopGlobalInput } = require('./global-input');
-    stopGlobalInput();
-    
-    // Stop hook server
-    const { stopHookServer } = require('../hooks/hook-server');
-    stopHookServer();
   });
 
-  // Prevent app crash
-  mainWindow.webContents.on('render-process-gone', (event, details) => {
-    console.error('Renderer process gone:', details);
+
+
+  mainWindow.once('ready-to-show', () => {
+    startCursorPolling(80); // Default optimized active polling
+
+    // Safely close the splash loading window once the main window is ready to show
+    if (loadingWindow && !loadingWindow.isDestroyed()) {
+      loadingWindow.close();
+      loadingWindow = null;
+    }
   });
+
+  // Click-through: Pass mouse inputs to window underneath if cursor is over transparent pixels
+  mainWindow.setIgnoreMouseEvents(true, { forward: true });
+
+  // Start keyboard/mouse event listener
+  const { setupGlobalInput } = require('./global-input');
+  setupGlobalInput(mainWindow);
+
+  // Start HTTP agent webhook server
+  const { startHookServer } = require('../hooks/hook-server');
+  startHookServer(mainWindow);
 }
 
 // IPC Handlers
+ipcMain.on('update-polling-rate', (event, rateType) => {
+  if (rateType === 'low') {
+    if (currentPollIntervalMs !== 1000) startCursorPolling(1000);
+  } else if (rateType === 'idle') {
+    if (currentPollIntervalMs !== 150) startCursorPolling(150);
+  } else {
+    if (currentPollIntervalMs !== 80) startCursorPolling(80);
+  }
+});
+
 ipcMain.on('set-ignore-mouse-events', (event, ignore, forward) => {
   const webContents = event.sender;
   const win = BrowserWindow.fromWebContents(webContents);
@@ -187,45 +180,130 @@ ipcMain.on('set-ignore-mouse-events', (event, ignore, forward) => {
   }
 });
 
-ipcMain.handle('get-settings', () => {
-  return store ? store.store : {};
+ipcMain.handle('open-external', async (event, url) => {
+  const { shell } = require('electron');
+  await shell.openExternal(url);
 });
 
-ipcMain.handle('update-settings', (event, key, value) => {
-  if (store) {
-    store.set(key, value);
-    
-    // Broadcast setting changes to all windows (e.g. settings-modal updates model key)
-    const windows = BrowserWindow.getAllWindows();
-    for (const win of windows) {
-      if (!win.isDestroyed()) {
-        win.webContents.send('settings-updated', { key, value });
-      }
-    }
+ipcMain.handle('get-settings', async () => {
+  return settingsData;
+});
 
-    // If size changed, dynamically resize window
-    if (key === 'size') {
-      const { width, height } = getWindowSize(value);
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        const bounds = mainWindow.getBounds();
-        // Resize but try to keep bottom-right alignment consistent
-        const dx = bounds.width - width;
-        const dy = bounds.height - height;
-        const targetX = bounds.x + dx;
-        const targetY = bounds.y + dy;
-        const clamped = clampToScreen(targetX, targetY, width, height);
-        mainWindow.setBounds({
-          x: clamped.x,
-          y: clamped.y,
-          width: width,
-          height: height
-        });
-        store.set('position', { x: clamped.x, y: clamped.y });
-      }
+ipcMain.handle('update-settings', async (event, key, value) => {
+  settingsData[key] = value;
+  await updateSetting(key, value);
+  
+  // Broadcast to all windows
+  const windows = BrowserWindow.getAllWindows();
+  for (const win of windows) {
+    if (!win.isDestroyed()) {
+      win.webContents.send('settings-updated', { key, value });
     }
-    return store.store;
   }
-  return {};
+
+  if (key === 'size') {
+    const { width, height } = getWindowSize(value);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      const bounds = mainWindow.getBounds();
+      const dx = bounds.width - width;
+      const dy = bounds.height - height;
+      const targetX = bounds.x + dx;
+      const targetY = bounds.y + dy;
+      const clamped = clampToScreen(targetX, targetY, width, height);
+      mainWindow.setBounds({
+        x: clamped.x,
+        y: clamped.y,
+        width: width,
+        height: height
+      });
+      settingsData.position = { x: clamped.x, y: clamped.y };
+      await updateSetting('position', settingsData.position);
+    }
+  }
+  return settingsData;
+});
+
+ipcMain.handle('save-position', async (event, pos) => {
+  const webContents = event.sender;
+  const win = BrowserWindow.fromWebContents(webContents);
+  if (win && pos && typeof pos.x === 'number' && typeof pos.y === 'number') {
+    const bounds = win.getBounds();
+    const clamped = clampToScreen(pos.x, pos.y, bounds.width, bounds.height);
+    settingsData.position = clamped;
+    await updateSetting('position', clamped);
+    win.setPosition(clamped.x, clamped.y);
+    return true;
+  }
+  return false;
+});
+
+ipcMain.handle('load-svg', async (event, relativePath) => {
+  try {
+    const safePath = path.normalize(path.join(__dirname, '../renderer', relativePath));
+    const projectRoot = path.normalize(path.join(__dirname, '../..'));
+    if (!safePath.toLowerCase().startsWith(projectRoot.toLowerCase())) {
+      throw new Error('Access denied');
+    }
+    if (fs.existsSync(safePath)) {
+      return fs.readFileSync(safePath, 'utf8');
+    }
+    throw new Error(`File not found: ${safePath}`);
+  } catch (err) {
+    console.error('Error loading SVG:', err);
+    throw err;
+  }
+});
+
+// IDE Integration IPC Handlers
+ipcMain.handle('register-claude-code', async () => {
+  try {
+    registerClaudeHooks();
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('register-claude-desktop', async () => {
+  try {
+    const success = registerClaudeDesktopHooks();
+    return { success };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('check-integration-status', async () => {
+  const status = {
+    claudeCode: false,
+    claudeDesktop: false,
+    dbPath: dbPath
+  };
+
+  // Check Claude Code
+  const claudeSettingsPath = path.join(os.homedir(), '.claude', 'settings.json');
+  if (fs.existsSync(claudeSettingsPath)) {
+    try {
+      const content = JSON.parse(fs.readFileSync(claudeSettingsPath, 'utf8'));
+      if (content.hooks && content.hooks.preCommand && content.hooks.preCommand.includes('18900')) {
+        status.claudeCode = true;
+      }
+    } catch (e) {}
+  }
+
+  // Check Claude Desktop
+  const appData = process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming');
+  const desktopConfigPath = path.join(appData, 'Claude', 'claude_desktop_config.json');
+  if (fs.existsSync(desktopConfigPath)) {
+    try {
+      const content = JSON.parse(fs.readFileSync(desktopConfigPath, 'utf8'));
+      if (content.mcpServers && content.mcpServers['kuro-pet']) {
+        status.claudeDesktop = true;
+      }
+    } catch (e) {}
+  }
+
+  return status;
 });
 
 let settingsWindow = null;
@@ -236,17 +314,15 @@ ipcMain.handle('open-settings-window', () => {
     return;
   }
 
-  const iconPath = path.join(__dirname, '../../assets/tray-icon.png');
+  // Adjusted size to 440x520 to fit sidebar tabs comfortably
   settingsWindow = new BrowserWindow({
-    width: 340,
-    height: 390,
+    width: 440,
+    height: 520,
     transparent: true,
     frame: false,
     resizable: false,
-    alwaysOnTop: true,
-    center: true,
-    skipTaskbar: true,
-    icon: fs.existsSync(iconPath) ? iconPath : undefined,
+    hasShadow: false,
+    icon: path.join(__dirname, '../../assets/tray-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, '../preload.js'),
       nodeIntegration: false,
@@ -258,9 +334,6 @@ ipcMain.handle('open-settings-window', () => {
 
   settingsWindow.on('closed', () => {
     settingsWindow = null;
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.focus();
-    }
   });
 });
 
@@ -268,38 +341,6 @@ ipcMain.handle('close-settings-window', () => {
   if (settingsWindow && !settingsWindow.isDestroyed()) {
     settingsWindow.close();
     settingsWindow = null;
-  }
-});
-
-ipcMain.handle('save-position', (event, pos) => {
-  if (store && pos && typeof pos.x === 'number' && typeof pos.y === 'number') {
-    const win = BrowserWindow.fromWebContents(event.sender);
-    if (win && !win.isDestroyed()) {
-      const bounds = win.getBounds();
-      const clamped = clampToScreen(pos.x, pos.y, bounds.width, bounds.height);
-      store.set('position', clamped);
-      win.setPosition(clamped.x, clamped.y);
-    }
-    return true;
-  }
-  return false;
-});
-
-ipcMain.handle('load-svg', async (event, relativePath) => {
-  try {
-    const safePath = path.normalize(path.join(__dirname, '../renderer', relativePath));
-    const projectRoot = path.normalize(path.join(__dirname, '../..'));
-    // Make comparison case-insensitive to handle Windows drive letter variations (d: vs D:)
-    if (!safePath.toLowerCase().startsWith(projectRoot.toLowerCase())) {
-      throw new Error('Access denied');
-    }
-    if (fs.existsSync(safePath)) {
-      return fs.readFileSync(safePath, 'utf8');
-    }
-    throw new Error(`File not found: ${safePath}`);
-  } catch (err) {
-    console.error('Error loading SVG:', err);
-    throw err;
   }
 });
 
@@ -328,29 +369,36 @@ function createLoadingWindow() {
   });
   
   loadingWindow.once('ready-to-show', () => {
-    loadingWindow.show();
+    if (loadingWindow && !loadingWindow.isDestroyed()) {
+      loadingWindow.show();
+    }
   });
 }
 
 ipcMain.on('log', (event, msg) => {
-  // Removed for memory optimization
+  // Console logging helper
 });
 
 // App lifecycle
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   createLoadingWindow();
+
+  try {
+    // 1. Initialize SQLite Database
+    await initDatabase();
+    // 2. Read settings from database
+    settingsData = await getSettings();
+    console.log('SQLite local database initialized successfully at:', dbPath);
+  } catch (err) {
+    console.error('Failed to initialize local SQLite settings database:', err);
+  }
 
   setTimeout(() => {
     createMainWindow();
 
     // Create tray icon
     const { createTray } = require('./tray');
-    createTray(mainWindow, store);
-
-    if (loadingWindow && !loadingWindow.isDestroyed()) {
-      loadingWindow.close();
-      loadingWindow = null;
-    }
+    createTray(mainWindow, settingsData);
   }, 1500);
 
   app.on('activate', () => {
@@ -367,6 +415,5 @@ app.on('window-all-closed', () => {
 });
 
 process.on('uncaughtException', (err) => {
-  // We keep error logging for crash troubleshooting
   console.error('Uncaught exception in main process:', err);
 });

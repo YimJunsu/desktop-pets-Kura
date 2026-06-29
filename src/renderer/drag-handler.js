@@ -27,8 +27,12 @@ class DragHandler {
 
   setupEvents() {
     this.container.addEventListener('pointerdown', (e) => {
-      // Do not drag if clicking the settings gear
-      if (e.target.closest('#settings-gear')) {
+      // Do not drag if clicking the settings gear, chat bubble trigger, or chat input panel
+      if (
+        e.target.closest('#settings-gear') || 
+        e.target.closest('#chat-trigger') || 
+        e.target.closest('#chat-input-panel')
+      ) {
         return;
       }
       
@@ -112,14 +116,50 @@ class DragHandler {
         window.api.setIgnoreMouseEvents(true, true);
       }
       
-      // Transition back to idle
-      this.renderer.stateMachine.setState('idle');
+      // Transition back to idle only if not in custom states that handle their own auto-restores
+      const current = this.renderer.stateMachine.currentStateName;
+      if (current !== 'happy' && current !== 'sad' && current !== 'error') {
+        this.renderer.stateMachine.setState('idle');
+      }
       this.renderer.stateMachine.resetInactivity();
+    });
+
+    // Right-click pet to trigger crying (sad) state
+    this.container.addEventListener('contextmenu', (e) => {
+      // Do not block settings gear, chat triggers, or input panels
+      if (
+        e.target.closest('#settings-gear') || 
+        e.target.closest('#chat-trigger') || 
+        e.target.closest('#chat-input-panel')
+      ) {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      
+      this.renderer.stateMachine.setState('sad');
+      
+      // Auto return to idle after 3 seconds
+      if (this.sadTimeout) clearTimeout(this.sadTimeout);
+      this.sadTimeout = setTimeout(() => {
+        if (this.renderer.stateMachine.currentStateName === 'sad') {
+          this.renderer.stateMachine.setState('idle');
+        }
+      }, 3000);
     });
   }
 
   onGrabbedEnter() {
     this.container.classList.add('grabbed-active');
+    const svg = this.container.querySelector('svg');
+    if (svg) {
+      const model = this.renderer.settings.model;
+      if (model === 'oyajichi') {
+        svg.style.transformOrigin = 'center top';
+      } else {
+        svg.style.transformOrigin = 'center bottom';
+      }
+    }
   }
 
   onGrabbedExit() {
@@ -136,6 +176,7 @@ class DragHandler {
         if (this.renderer.stateMachine.currentStateName !== 'grabbed') {
           svg.style.transition = '';
           svg.style.transform = '';
+          svg.style.transformOrigin = '';
         }
       }, 300);
     }
@@ -145,16 +186,16 @@ class DragHandler {
     const svg = this.container.querySelector('svg');
     if (!svg) return;
     
-    // Stretch factor based on vertical speed (max stretch of 1.4)
+    // Stretch factor based on vertical speed (max stretch increased from 1.4 to 1.9)
     const stretchSpeed = Math.abs(this.vy);
-    const scaleY = 1.0 + Math.min(stretchSpeed * 1.5, 0.4);
+    const scaleY = 1.0 + Math.min(stretchSpeed * 3.5, 0.9);
     
-    // Compress width to conserve volume (mochi principle)
-    const scaleX = 1.0 - Math.min(stretchSpeed * 0.8, 0.2);
+    // Compress width to conserve volume (max compression increased from 0.2 to 0.4)
+    const scaleX = 1.0 - Math.min(stretchSpeed * 1.8, 0.4);
     
-    // Skew based on horizontal speed (max skew 15 degrees)
+    // Skew based on horizontal speed (max skew angle increased from 15 to 30 degrees)
     const skewSpeed = this.vx;
-    const skewX = Math.max(-15, Math.min(skewSpeed * 40, 15));
+    const skewX = Math.max(-30, Math.min(skewSpeed * 80, 30));
     
     // Apply transformations
     svg.style.transform = `scale(${scaleX}, ${scaleY}) skewX(${skewX}deg)`;

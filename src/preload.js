@@ -5,6 +5,9 @@ contextBridge.exposeInMainWorld('api', {
   setIgnoreMouseEvents: (ignore, forward) => {
     ipcRenderer.send('set-ignore-mouse-events', ignore, forward);
   },
+  updatePollingRate: (rateType) => {
+    ipcRenderer.send('update-polling-rate', rateType);
+  },
   
   // Listeners
   onCursorMove: (callback) => {
@@ -43,6 +46,12 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.on('settings-updated', listener);
     return () => ipcRenderer.removeListener('settings-updated', listener);
   },
+  
+  // Agent Integrations
+  registerClaudeCode: () => ipcRenderer.invoke('register-claude-code'),
+  registerClaudeDesktop: () => ipcRenderer.invoke('register-claude-desktop'),
+  checkIntegrationStatus: () => ipcRenderer.invoke('check-integration-status'),
+  openExternal: (url) => ipcRenderer.invoke('open-external', url),
   
   // Log helper
   log: (msg) => ipcRenderer.send('log', msg)

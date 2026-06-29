@@ -1,10 +1,11 @@
 const { Tray, Menu, BrowserWindow, ipcMain, app } = require('electron');
 const path = require('path');
+const { updateSetting } = require('./db');
 
 let tray = null;
 let settingsWindow = null;
 
-function createTray(mainWindow, store) {
+function createTray(mainWindow, settingsData) {
   // Load tray icon
   const iconPath = path.join(__dirname, '../../assets/tray-icon.png');
   tray = new Tray(iconPath);
@@ -23,34 +24,34 @@ function createTray(mainWindow, store) {
         {
           label: 'Small (128px)',
           type: 'radio',
-          checked: (store ? store.get('size') : 'M') === 'S',
-          click: () => changeSize(mainWindow, store, 'S')
+          checked: (settingsData.size || 'M') === 'S',
+          click: () => changeSize(mainWindow, settingsData, 'S')
         },
         {
           label: 'Medium (192px)',
           type: 'radio',
-          checked: (store ? store.get('size') : 'M') === 'M',
-          click: () => changeSize(mainWindow, store, 'M')
+          checked: (settingsData.size || 'M') === 'M',
+          click: () => changeSize(mainWindow, settingsData, 'M')
         },
         {
           label: 'Large (256px)',
           type: 'radio',
-          checked: (store ? store.get('size') : 'M') === 'L',
-          click: () => changeSize(mainWindow, store, 'L')
+          checked: (settingsData.size || 'M') === 'L',
+          click: () => changeSize(mainWindow, settingsData, 'L')
         }
       ]
     },
     {
       label: 'Follow Mouse Mode',
       type: 'checkbox',
-      checked: store ? store.get('followMode') : false,
-      click: (menuItem) => toggleFollow(mainWindow, store, menuItem.checked)
+      checked: !!settingsData.followMode,
+      click: (menuItem) => toggleFollow(mainWindow, settingsData, menuItem.checked)
     },
     {
       label: 'Sleep Mode',
       type: 'checkbox',
-      checked: store ? store.get('sleepMode') : false,
-      click: (menuItem) => toggleSleep(mainWindow, store, menuItem.checked)
+      checked: !!settingsData.sleepMode,
+      click: (menuItem) => toggleSleep(mainWindow, settingsData, menuItem.checked)
     },
     { type: 'separator' },
     {
@@ -83,8 +84,8 @@ function createTray(mainWindow, store) {
     },
     { type: 'separator' },
     {
-      label: 'Gemini Settings...',
-      click: () => openSettingsWindow(mainWindow, store)
+      label: 'Settings (설정)...',
+      click: () => openSettingsWindow(mainWindow)
     },
     { type: 'separator' },
     {
@@ -100,7 +101,7 @@ function createTray(mainWindow, store) {
   
   // Double-clicking the tray icon can wake up the pet
   tray.on('double-click', () => {
-    toggleSleep(mainWindow, store, false);
+    toggleSleep(mainWindow, settingsData, false);
     
     // Update the menu checkbox
     const sleepItem = contextMenu.items.find(item => item.label === 'Sleep Mode');
@@ -110,41 +111,44 @@ function createTray(mainWindow, store) {
   return tray;
 }
 
-function changeSize(win, store, size) {
-  if (store) store.set('size', size);
+async function changeSize(win, settingsData, size) {
+  settingsData.size = size;
+  await updateSetting('size', size);
   if (win && !win.isDestroyed()) {
     win.webContents.send('state-command', { action: 'change-size', value: size });
   }
 }
 
-function toggleFollow(win, store, active) {
-  if (store) store.set('followMode', active);
+async function toggleFollow(win, settingsData, active) {
+  settingsData.followMode = active;
+  await updateSetting('followMode', active);
   if (win && !win.isDestroyed()) {
     win.webContents.send('state-command', { action: 'toggle-follow', value: active });
   }
 }
 
-function toggleSleep(win, store, active) {
-  if (store) store.set('sleepMode', active);
+async function toggleSleep(win, settingsData, active) {
+  settingsData.sleepMode = active;
+  await updateSetting('sleepMode', active);
   if (win && !win.isDestroyed()) {
     win.webContents.send('state-command', { action: 'toggle-sleep', value: active });
   }
 }
 
-function openSettingsWindow(parentWin, store) {
-  if (settingsWindow) {
+function openSettingsWindow(parentWin) {
+  if (settingsWindow && !settingsWindow.isDestroyed()) {
     settingsWindow.focus();
     return;
   }
 
   settingsWindow = new BrowserWindow({
-    width: 400,
-    height: 250,
-    parent: parentWin,
-    modal: true,
+    width: 440,
+    height: 520,
+    transparent: true,
+    frame: false,
     resizable: false,
-    frame: true,
-    title: 'Gemini Settings',
+    hasShadow: false,
+    icon: path.join(__dirname, '../../assets/tray-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, '../preload.js'),
       nodeIntegration: false,
@@ -152,8 +156,7 @@ function openSettingsWindow(parentWin, store) {
     }
   });
 
-  settingsWindow.loadFile(path.join(__dirname, '../renderer/settings.html'));
-  settingsWindow.setMenu(null); // Hide menu bar
+  settingsWindow.loadFile(path.join(__dirname, '../renderer/settings-modal.html'));
 
   settingsWindow.on('closed', () => {
     settingsWindow = null;

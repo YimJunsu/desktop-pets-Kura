@@ -13,6 +13,7 @@ class StateMachine {
       typing: new TypingState(this),
       thinking: new ThinkingState(this),
       happy: new HappyState(this),
+      sad: new SadState(this),
       error: new ErrorState(this),
       grabbed: new GrabbedState(this),
       following: new FollowingState(this)
@@ -54,6 +55,17 @@ class StateMachine {
     this.renderer.animator.setAnimation(stateName);
     
     this.currentState.enter();
+
+    // Dynamically throttle cursor polling interval on the main process to save memory/CPU
+    if (window.api && window.api.updatePollingRate) {
+      if (stateName === 'sleeping') {
+        window.api.updatePollingRate('low');
+      } else if (stateName === 'idle') {
+        window.api.updatePollingRate('idle');
+      } else {
+        window.api.updatePollingRate('high');
+      }
+    }
   }
 
   resetInactivity() {
@@ -236,5 +248,19 @@ class FollowingState extends BaseState {
     if (this.machine.renderer.followMode) {
       this.machine.renderer.followMode.stop();
     }
+  }
+}
+
+class SadState extends BaseState {
+  enter() {
+    // Auto return to idle after 3 seconds
+    this.timeout = setTimeout(() => {
+      if (this.machine.currentStateName === 'sad') {
+        this.machine.setState('idle');
+      }
+    }, 3000);
+  }
+  exit() {
+    if (this.timeout) clearTimeout(this.timeout);
   }
 }

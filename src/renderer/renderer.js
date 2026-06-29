@@ -91,8 +91,37 @@ class PetRenderer {
       this.stateMachine.resetInactivity();
     });
     
-    window.addEventListener('mousedown', () => {
+    let clickCount = 0;
+    let lastClickTime = 0;
+    const petContainer = document.getElementById('pet-container');
+
+    window.addEventListener('mousedown', (e) => {
       this.stateMachine.resetInactivity();
+
+      // Check if click targets the pet body (excluding hover gear/chat UI buttons)
+      const gear = document.getElementById('settings-gear');
+      const chatTrigger = document.getElementById('chat-trigger');
+      const chatInputPanel = document.getElementById('chat-input-panel');
+      const isOverUI = (gear && gear.contains(e.target)) || 
+                       (chatTrigger && chatTrigger.contains(e.target)) ||
+                       (chatInputPanel && chatInputPanel.contains(e.target));
+                       
+      if (petContainer && petContainer.contains(e.target) && !isOverUI) {
+        const now = Date.now();
+        if (now - lastClickTime < 350) {
+          clickCount++;
+        } else {
+          clickCount = 1;
+        }
+        lastClickTime = now;
+
+        if (clickCount === 3) {
+          clickCount = 0; // reset
+          if (this.stateMachine) {
+            this.stateMachine.setState('happy');
+          }
+        }
+      }
     });
 
     window.addEventListener('keydown', () => {

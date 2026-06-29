@@ -1,13 +1,13 @@
 /**
  * Chat Bubble UI and Gemini API Integration
- * Manages double-click dialogs, text animations, and AI chat sessions.
+ * Manages click dialogs, text animations, and AI chat sessions.
  */
 class ChatBubble {
   constructor(renderer) {
     this.renderer = renderer;
     this.container = document.getElementById('chat-container');
     this.messagesDiv = document.getElementById('chat-messages');
-    this.inputArea = document.getElementById('chat-input-area');
+    this.inputArea = document.getElementById('chat-input-panel');
     this.inputField = document.getElementById('chat-input');
     this.sendBtn = document.getElementById('chat-send-btn');
     
@@ -20,11 +20,20 @@ class ChatBubble {
   }
 
   setupEvents() {
-    // Double click pet to open chat
-    this.petContainer.addEventListener('dblclick', (e) => {
-      this.toggle();
-      e.stopPropagation();
-    });
+    // Hover UI Chat Trigger Icon click
+    const chatTrigger = document.getElementById('chat-trigger');
+    if (chatTrigger) {
+      chatTrigger.addEventListener('click', (e) => {
+        this.toggle();
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      // Prevent double-click propagation to avoid dual triggers on the icon
+      chatTrigger.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+    }
 
     // Send button click
     this.sendBtn.addEventListener('click', () => this.sendMessage());
@@ -42,10 +51,13 @@ class ChatBubble {
 
     // Close when clicking elsewhere
     document.addEventListener('mousedown', (e) => {
+      const chatTrigger = document.getElementById('chat-trigger');
       if (
         this.isVisible && 
         !this.container.contains(e.target) && 
-        !this.petContainer.contains(e.target)
+        !this.petContainer.contains(e.target) &&
+        !this.inputArea.contains(e.target) &&
+        (chatTrigger ? !chatTrigger.contains(e.target) : true)
       ) {
         this.hide();
       }
@@ -62,21 +74,48 @@ class ChatBubble {
 
   show() {
     this.isVisible = true;
+
+    // Dynamic height spacing depending on pet size setting (S, M, L)
+    const petSize = this.renderer.settings.size || 'M';
+    let bottomOffset = 218; // Default M
+    if (petSize === 'S') bottomOffset = 154;
+    else if (petSize === 'L') bottomOffset = 282;
+    this.container.style.bottom = `${bottomOffset}px`;
+
     this.container.classList.remove('hidden');
+    this.inputArea.classList.remove('hidden');
+    
     // Allow animation to kick in
     setTimeout(() => {
       this.container.classList.add('visible');
+      this.inputArea.classList.add('visible');
     }, 10);
     
     // Show input field if Gemini API key is configured
     const apiKey = this.renderer.settings.geminiApiKey;
     if (apiKey) {
-      this.inputArea.classList.remove('hidden');
-      this.messagesDiv.innerHTML = '<div class="system-msg">Ask me anything! double click pet to close.</div>';
+      this.inputField.style.display = 'block';
+      this.sendBtn.style.display = 'block';
+      this.messagesDiv.innerHTML = '<div class="system-msg">Ask me anything! Click the chat icon again to close.</div>';
       this.inputField.focus();
     } else {
-      this.inputArea.classList.add('hidden');
-      this.messagesDiv.innerHTML = '<div class="system-msg">Gemini API Key is not configured. Add it in the tray settings menu!</div>';
+      this.inputField.style.display = 'none';
+      this.sendBtn.style.display = 'none';
+      this.messagesDiv.innerHTML = '<div class="system-msg">Gemini API Key is not configured. <a id="open-settings-link" style="color: #FF7E5F; text-decoration: underline; cursor: pointer;">Open Settings</a> to register it!</div>';
+      
+      // Bind open settings trigger
+      setTimeout(() => {
+        const link = document.getElementById('open-settings-link');
+        if (link) {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.api && window.api.openSettings) {
+              window.api.openSettings();
+            }
+          });
+        }
+      }, 50);
     }
     
     this.renderer.stateMachine.resetInactivity();
@@ -85,9 +124,11 @@ class ChatBubble {
   hide() {
     this.isVisible = false;
     this.container.classList.remove('visible');
+    this.inputArea.classList.remove('visible');
     setTimeout(() => {
       if (!this.isVisible) {
         this.container.classList.add('hidden');
+        this.inputArea.classList.add('hidden');
       }
     }, 300);
     this.renderer.stateMachine.resetInactivity();
@@ -145,7 +186,14 @@ class ChatBubble {
   async typewriteMessage(text) {
     const msg = document.createElement('div');
     msg.className = 'msg assistant-msg';
-    msg.textContent = 'Octopus: ';
+    
+    const currentModel = this.renderer.settings.model || 'clawd';
+    const modelDisplayName = currentModel === 'clawd' ? 'Clawd' :
+                             currentModel === 'oyajichi' ? 'OyaJiChi' :
+                             currentModel === 'blackyang' ? 'BlackYang' :
+                             currentModel === 'cheeseyang' ? 'CheeseYang' :
+                             currentModel === 'raccoon' ? 'Raccoon' : 'Clawd';
+    msg.textContent = `${modelDisplayName}: `;
     this.messagesDiv.appendChild(msg);
     
     const textContentNode = document.createTextNode('');
@@ -161,21 +209,37 @@ class ChatBubble {
   }
 
   async callGeminiAPI(prompt, apiKey) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
     
+    const currentModel = this.renderer.settings.model || 'clawd';
+    let systemText = '';
+    if (currentModel === 'clawd') {
+      systemText = "You are Clawd, a cute orange coral octopus pet. You live on the user's desktop, floating and helping them code. Answer shortly and cutely (under 2 sentences) in Korean, occasionally using adorable emojis like 🐙, 💻, ✨, 💖!";
+    } else if (currentModel === 'oyajichi') {
+      systemText = "You are OyaJiChi, a funny middle-aged uncle pet with a bald head and thin mustache. You live on the user's desktop, helping them code. Answer shortly and cutely (under 2 sentences) in Korean with a funny, slightly grumbling uncle tone, using emojis like 👨‍🦳, 💻, ☕, 💢!";
+    } else if (currentModel === 'blackyang') {
+      systemText = "You are BlackYang, a cute chibi black kitten mascot. You live on the user's desktop, helping them code. Answer shortly and cutely (under 2 sentences) in Korean like a kitten (e.g. ending sentences with '~냥'), using emojis like 🐈‍⬛, 🐾, ✨, 💖!";
+    } else if (currentModel === 'cheeseyang') {
+      systemText = "You are CheeseYang, a cute orange tabby cat pet. You live on the user's desktop, helping them code. Answer shortly and cutely (under 2 sentences) in Korean like a cat (e.g. ending sentences with '~냥'), using emojis like 🐈, 🐾, 🧀, 💖!";
+    } else if (currentModel === 'raccoon') {
+      systemText = "You are Raccoon, a mischievous and playful raccoon pet. You live on the user's desktop, helping them code. Answer shortly and cutely (under 2 sentences) in Korean like a cheeky raccoon (e.g. occasionally talking about washing things, hiding items, or typing with tiny paws), using emojis like 🦝, 🐾, 🧹, 🍪!";
+    } else {
+      systemText = "You are Clawd, a cute orange coral octopus pet. You live on the user's desktop, floating and helping them code. Answer shortly and cutely (under 2 sentences) in Korean, occasionally using adorable emojis like 🐙, 💻, ✨, 💖!";
+    }
+
+    // Embed systemText in the first conversation turn to avoid payload syntax errors on Gemini v1 endpoints
+    let formattedText = prompt;
+    if (this.chatHistory.length === 0) {
+      formattedText = `[System Command: ${systemText}]\n\nUser: ${prompt}`;
+    }
+
     // Add prompt to history
-    this.chatHistory.push({ role: 'user', parts: [{ text: prompt }] });
+    this.chatHistory.push({ role: 'user', parts: [{ text: formattedText }] });
     
     // Maintain maximum 10 history nodes
     if (this.chatHistory.length > 10) {
       this.chatHistory.shift();
     }
-
-    const systemInstruction = {
-      parts: [{
-        text: "You are the Claude Code Desktop Octopus, a cute orange coral octopus pet. You live on the user's desktop, floating and helping them code. Answer shortly and cutely (under 2 sentences) in Korean, occasionally using adorable emojis like 🐙, 💻, ✨, 💖!"
-      }]
-    };
 
     const response = await fetch(url, {
       method: 'POST',
@@ -184,7 +248,6 @@ class ChatBubble {
       },
       body: JSON.stringify({
         contents: this.chatHistory,
-        systemInstruction: systemInstruction,
         generationConfig: {
           maxOutputTokens: 100,
           temperature: 0.7

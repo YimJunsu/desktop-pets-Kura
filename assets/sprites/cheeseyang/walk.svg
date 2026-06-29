@@ -1,0 +1,77 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1" flood-color="#000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+  <style>
+    @keyframes bob {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(0.6px); }
+    }
+    @keyframes swing-left {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-1.5px); }
+    }
+    @keyframes swing-right {
+      0%, 100% { transform: translateY(-1.5px); }
+      50% { transform: translateY(0px); }
+    }
+    .body-bob {
+      animation: bob 0.4s infinite ease-in-out;
+    }
+    .leg-left-pair {
+      animation: swing-left 0.4s infinite ease-in-out;
+    }
+    .leg-right-pair {
+      animation: swing-right 0.4s infinite ease-in-out;
+    }
+  </style>
+  <g transform="translate(4, 4)">
+    <!-- White background outline silhouette -->
+    <g fill="#ffffff" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="miter" filter="url(#shadow)">
+      <path class="body-bob" d="M 5 5 L 5 2 H 7 V 5 H 17 V 2 H 19 V 5 V 10 H 22 V 13 H 19 V 14 H 23 V 8 H 21 V 14 H 19 V 17 H 5 V 13 H 2 V 10 H 5 Z" />
+      <rect class="leg-left-pair" x="7" y="17" width="1" height="3" />
+      <rect class="leg-right-pair" x="8.5" y="17" width="1" height="3" />
+      <rect class="leg-left-pair" x="14.5" y="17" width="1" height="3" />
+      <rect class="leg-right-pair" x="16" y="17" width="1" height="3" />
+    </g>
+    
+    <!-- Foreground dark grey -->
+    <g fill="#FF9F43">
+      <path class="body-bob" d="M 5 5 L 5 2 H 7 V 5 H 17 V 2 H 19 V 5 V 10 H 22 V 13 H 19 V 14 H 23 V 8 H 21 V 14 H 19 V 17 H 5 V 13 H 2 V 10 H 5 Z" />
+      <rect class="leg-left-pair" x="7" y="17" width="1" height="3" />
+      <rect class="leg-right-pair" x="8.5" y="17" width="1" height="3" />
+      <rect class="leg-left-pair" x="14.5" y="17" width="1" height="3" />
+      <rect class="leg-right-pair" x="16" y="17" width="1" height="3" />
+    </g>
+
+    <!-- Eyes (bob with body) -->
+    <g class="body-bob">
+      <rect x="7" y="7" width="3" height="3" fill="#ffffff" />
+      <!-- CheeseYang Pixel Details (Synced inside head/body bob group) -->
+      <!-- Pink inner ears -->
+      <rect x="5.5" y="2.5" width="1" height="1" fill="#FFB6C1" />
+      <rect x="17.5" y="2.5" width="1" height="1" fill="#FFB6C1" />
+      
+      <!-- Tabby Stripes -->
+      <rect x="11" y="3" width="2" height="1" fill="#D35400" />
+      <rect x="11" y="5" width="2" height="1" fill="#D35400" />
+      <rect x="5" y="8" width="1" height="2" fill="#D35400" />
+      <rect x="18" y="8" width="1" height="2" fill="#D35400" />
+      <rect x="17" y="12" width="2" height="1" fill="#D35400" />
+      <rect x="18" y="14" width="2" height="1" fill="#D35400" />
+      <rect x="19" y="16" width="2" height="1" fill="#D35400" />
+      <rect x="21" y="9" width="1" height="1" fill="#D35400" />
+      <rect x="22" y="11" width="1" height="1" fill="#D35400" />
+      
+      <!-- White Muzzle & Pink Nose -->
+      <rect x="9.5" y="9.5" width="5" height="2.5" fill="#FFFFFF" rx="0.5" />
+      <rect x="11.5" y="10" width="1" height="0.8" fill="#FF8B94" />
+    
+      <rect x="14" y="7" width="3" height="3" fill="#ffffff" />
+      <rect x="7" y="7" width="1.2" height="1.2" fill="#000000" />
+      <rect x="15.8" y="8.8" width="1.2" height="1.2" fill="#000000" />
+    </g>
+  </g>
+</svg>

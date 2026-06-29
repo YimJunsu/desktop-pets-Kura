@@ -4,176 +4,385 @@
   <meta charset="UTF-8">
   <title>Pet Settings</title>
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* Absolute Window Transparency Fixes */
+    html, body {
+      background: transparent !important;
+      background-color: transparent !important;
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background: transparent;
+      width: 100vw;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 100vw;
-      height: 100vh;
       user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
+
+    /* Glassmorphism Dark Mode Container */
     .modal-content {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-radius: 20px;
-      width: 300px;
-      padding: 20px;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: rgba(20, 18, 28, 0.88);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-radius: 24px;
+      width: 400px;
+      height: 480px;
+      padding: 0;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), 
+                  inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                  inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       display: flex;
       flex-direction: column;
-      gap: 15px;
-      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+      color: #E2E8F0;
+      -webkit-app-region: drag; /* Draggable window space */
+      overflow: hidden;
     }
+
+    /* Prevent dragging on interactive fields */
+    .close-modal, 
+    .sidebar, 
+    .tab-content, 
+    .save-btn {
+      -webkit-app-region: no-drag;
+    }
+
     @keyframes popIn {
-      from { transform: scale(0.8); opacity: 0; }
+      from { transform: scale(0.9); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
+
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px 20px;
+      background: rgba(0, 0, 0, 0.2);
     }
+
     .modal-header h3 {
       margin: 0;
-      color: #D97757;
       font-size: 15px;
       font-weight: bold;
+      background: linear-gradient(135deg, #FF7E5F, #FEB47B, #8B5CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
+
     .close-modal {
       cursor: pointer;
       font-size: 20px;
-      color: #6b7280;
+      color: #94A3B8;
       font-weight: bold;
       line-height: 1;
-      transition: color 0.2s ease;
+      transition: color 0.2s ease, transform 0.2s ease;
     }
+
     .close-modal:hover {
-      color: #D97757;
+      color: #FF7E5F;
+      transform: scale(1.1);
     }
-    .section-title {
-      font-size: 11px;
-      font-weight: bold;
-      color: #8b5cf6;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin: 0 0 8px 0;
-    }
-    .pet-cards {
+
+    /* Sidebar Layout */
+    .main-layout {
       display: flex;
-      gap: 12px;
-    }
-    .pet-card {
       flex: 1;
-      background: rgba(255, 255, 255, 0.6);
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
+      height: calc(100% - 100px); /* Leave room for header & footer */
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 110px;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.01);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 6px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
       padding: 10px 8px;
-      text-align: center;
+      border-radius: 8px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: #E2E8F0;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(255, 126, 95, 0.15), rgba(139, 92, 246, 0.15));
+      color: #FF7E5F;
+      border-left: 2px solid #FF7E5F;
+    }
+
+    /* Content Area */
+    .tab-content {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tab-pane.active {
+      display: flex;
+    }
+
+    .section-title {
+      font-size: 10px;
+      font-weight: bold;
+      color: #A78BFA;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 0 0 6px 0;
+    }
+
+    /* Form control & elements */
+    .input-field {
+      width: 100%;
+      box-sizing: border-box;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 8px 12px;
+      color: #E2E8F0;
+      font-size: 11px;
+      transition: border-color 0.2s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #FF7E5F;
+    }
+
+    /* SQLite Info card */
+    .info-card {
+      background: rgba(139, 92, 246, 0.05);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 10px;
+      line-height: 1.4;
+      color: #CBD5E1;
+    }
+
+    .db-path-container {
+      margin-top: 8px;
+      margin-bottom: 12px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 8px 12px;
+    }
+
+    .db-path-label {
+      font-size: 9px;
+      color: #94A3B8;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .db-path {
+      font-family: monospace;
+      font-size: 9px;
+      word-break: break-all;
+      color: #38bdf8;
+      user-select: text;
+    }
+
+    /* Integration Action buttons */
+    .btn-integration {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 8px 12px;
+      color: #E2E8F0;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      text-align: left;
+    }
+
+    .btn-integration:hover {
+      background: rgba(255, 126, 95, 0.1);
+      border-color: rgba(255, 126, 95, 0.4);
+    }
+
+    .badge-status {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .status-active {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .status-inactive {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .guide-text {
+      font-size: 9px;
+      color: #94A3B8;
+      line-height: 1.35;
+      margin: 0;
+    }
+
+    .code-box {
+      font-family: monospace;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 6px;
+      border-radius: 6px;
+      font-size: 8.5px;
+      color: #e5e7eb;
+      margin-top: 4px;
+      word-break: break-all;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      user-select: text;
+    }
+
+    /* 3 Columns Grid for Pets */
+    .pet-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .pet-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 6px 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
+
     .pet-card:hover {
-      border-color: #D97757;
-      transform: translateY(-1px);
+      border-color: rgba(255, 126, 95, 0.3);
+      background: rgba(255, 255, 255, 0.05);
     }
+
     .pet-card.selected {
-      border-color: #D97757;
-      background: rgba(217, 119, 87, 0.08);
-      box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.15);
+      border-color: #FF7E5F;
+      background: linear-gradient(135deg, rgba(255, 126, 95, 0.12), rgba(139, 92, 246, 0.12));
     }
-    .card-preview {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 48px;
+
+    .card-preview svg {
+      width: 28px;
+      height: 28px;
     }
+
     .card-name {
-      font-size: 10px;
-      font-weight: bold;
-      color: #374151;
+      font-size: 9px;
+      font-weight: 600;
+      color: #CBD5E1;
     }
-    
-    /* Size button group */
+
     .size-group {
       display: flex;
-      gap: 8px;
+      gap: 6px;
     }
+
     .size-btn {
       flex: 1;
-      background: rgba(255, 255, 255, 0.6);
-      border: 1px solid #e5e7eb;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 8px;
       padding: 6px 0;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: bold;
-      color: #4b5563;
+      color: #94A3B8;
       cursor: pointer;
       transition: all 0.2s ease;
     }
+
     .size-btn:hover {
-      border-color: #D97757;
-      color: #D97757;
+      border-color: #FF7E5F;
     }
+
     .size-btn.selected {
-      background: #D97757;
+      background: linear-gradient(135deg, #FF7E5F, #8B5CF6);
       color: white;
-      border-color: #D97757;
-      box-shadow: 0 2px 6px rgba(217, 119, 87, 0.25);
+      border-color: transparent;
     }
-    
-    /* Toggle checkboxes */
+
     .toggle-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
+
     .toggle-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255, 255, 255, 0.5);
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
       padding: 8px 12px;
-      font-size: 11px;
-      color: #374151;
-      font-weight: 500;
+      font-size: 10px;
+      color: #E2E8F0;
     }
+
     .switch {
       position: relative;
       display: inline-block;
       width: 32px;
       height: 18px;
     }
+
     .switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
+
     .slider {
       position: absolute;
       cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: .3s;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.15);
+      transition: .3s ease;
       border-radius: 18px;
     }
+
     .slider:before {
       position: absolute;
       content: "";
@@ -182,18 +391,29 @@
       left: 3px;
       bottom: 3px;
       background-color: white;
-      transition: .3s;
+      transition: .3s ease;
       border-radius: 50%;
     }
+
     input:checked + .slider {
-      background-color: #D97757;
+      background: linear-gradient(135deg, #FF7E5F, #8B5CF6);
     }
+
     input:checked + .slider:before {
       transform: translateX(14px);
     }
-    
+
+    /* Modal Footer */
+    .modal-footer {
+      display: flex;
+      padding: 12px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
     .save-btn {
-      background: #8b5cf6;
+      width: 100%;
+      background: linear-gradient(135deg, #8B5CF6, #FF7E5F);
       color: white;
       border: none;
       border-radius: 10px;
@@ -202,11 +422,14 @@
       font-weight: bold;
       cursor: pointer;
       text-align: center;
-      transition: background 0.2s ease;
-      box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2);
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35);
     }
+
     .save-btn:hover {
-      background: #7c3aed;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+      filter: brightness(1.1);
     }
   </style>
 </head>
@@ -214,93 +437,267 @@
   <div class="modal-content">
     <div class="modal-header">
       <h3>Pet Settings ⚙️</h3>
-      <span id="close-modal-btn" class="close-modal">&times;</span>
+      <span id="close-modal-btn-header" class="close-modal">&times;</span>
     </div>
     
-    <!-- 1. Pet Model -->
-    <div class="settings-section">
-      <div class="section-title">Character Model</div>
-      <div class="pet-cards">
-        <div class="pet-card" data-model="octopus">
-          <div class="card-preview">
-            <svg viewBox="0 0 32 32" width="48" height="48">
-              <g transform="translate(4,4)">
-                <path d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949z" fill="#D97757" />
-                <rect x="6" y="8.102" width="1.488" height="2.847" fill="#000000" />
-                <rect x="16.51" y="8.102" width="1.49" height="2.847" fill="#000000" />
-              </g>
-            </svg>
+    <div class="main-layout">
+      <!-- Sidebar Navigation -->
+      <div class="sidebar">
+        <button class="tab-btn active" data-tab="tab-pet">🐾 PET</button>
+        <button class="tab-btn" data-tab="tab-gemini">🔑 Gemini API</button>
+        <button class="tab-btn" data-tab="tab-agent">🤖 IDE / Agent</button>
+      </div>
+      
+      <!-- Content Area -->
+      <div class="tab-content">
+        <!-- 1. PET TAB -->
+        <div class="tab-pane active" id="tab-pet">
+          <div>
+            <div class="section-title">Character Model</div>
+            <div class="pet-cards">
+              <!-- Clawd -->
+              <div class="pet-card" data-model="clawd">
+                <div class="card-preview">
+                  <svg viewBox="0 0 32 32">
+                    <g transform="translate(4,4)">
+                      <path d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949z" fill="#D97757" />
+                      <rect x="6" y="8.102" width="1.488" height="2.847" fill="#000000" />
+                      <rect x="16.51" y="8.102" width="1.49" height="2.847" fill="#000000" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="card-name">Clawd</div>
+              </div>
+              
+              <!-- BlackYang -->
+              <div class="pet-card" data-model="blackyang">
+                <div class="card-preview">
+                  <svg viewBox="0 0 32 32">
+                    <g transform="translate(4,4)">
+                      <path d="M 5 5 L 5 2 H 7 V 5 H 17 V 2 H 19 V 5 V 10 H 22 V 13 H 19 V 14 H 23 V 8 H 21 V 14 H 19 V 17 H 17 V 20 H 15 V 17 H 9 V 20 H 7 V 17 H 5 V 13 H 2 V 10 H 5 Z" fill="#1E1B18" />
+                      <rect x="7" y="7" width="3" height="3" fill="#ffffff" />
+                      <rect x="14" y="7" width="3" height="3" fill="#ffffff" />
+                      <rect x="7" y="7" width="1.2" height="1.2" fill="#000" />
+                      <rect x="15.8" y="8.8" width="1.2" height="1.2" fill="#000" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="card-name">BlackYang</div>
+              </div>
+
+              <!-- OyaJiChi -->
+              <div class="pet-card" data-model="oyajichi">
+                <div class="card-preview">
+                  <svg viewBox="0 0 32 32">
+                    <g transform="translate(4,4)">
+                      <ellipse cx="12" cy="12" rx="9" ry="8" fill="#FCE0C5" stroke="#1E1B18" stroke-width="1.0" />
+                      <path d="M 6.2 15.2 Q 8.5 13.6 12 13.6 Q 15.5 13.6 17.8 15.2 Q 15.5 14.2 12 14.2 Q 8.5 14.2 6.2 15.2 Z" fill="#1E1B18" stroke="#1E1B18" stroke-width="0.5" />
+                      <circle cx="7.8" cy="9.5" r="0.75" fill="#0E2F44" />
+                      <circle cx="16.2" cy="9.5" r="0.75" fill="#0E2F44" />
+                      <path d="M 6.5 8 L 9 8" stroke="#1E1B18" stroke-width="1.0" stroke-linecap="round" />
+                      <path d="M 15 8 L 17.5 8" stroke="#1E1B18" stroke-width="1.0" stroke-linecap="round" />
+                      <path d="M 12 4 Q 13 2 12 1 T 13 -1" fill="none" stroke="#1E1B18" stroke-width="1.0" stroke-linecap="round" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="card-name">OyaJiChi</div>
+              </div>
+
+              <!-- CheeseYang -->
+              <div class="pet-card" data-model="cheeseyang">
+                <div class="card-preview">
+                  <svg viewBox="0 0 32 32">
+                    <g transform="translate(4,4)">
+                      <path d="M 5 5 L 5 2 H 7 V 5 H 17 V 2 H 19 V 5 V 10 H 22 V 13 H 19 V 14 H 23 V 8 H 21 V 14 H 19 V 17 H 17 V 20 H 15 V 17 H 9 V 20 H 7 V 17 H 5 V 13 H 2 V 10 H 5 Z" fill="#FF9F43" />
+                      <rect x="7" y="7" width="3" height="3" fill="#ffffff" />
+                      <rect x="14" y="7" width="3" height="3" fill="#ffffff" />
+                      <rect x="7" y="7" width="1.2" height="1.2" fill="#000" />
+                      <rect x="15.8" y="8.8" width="1.2" height="1.2" fill="#000" />
+                      <!-- Details overlay -->
+                      <rect x="5.5" y="2.5" width="1" height="1" fill="#FFB6C1" />
+                      <rect x="17.5" y="2.5" width="1" height="1" fill="#FFB6C1" />
+                      <rect x="11" y="3" width="2" height="1" fill="#D35400" />
+                      <rect x="11" y="5" width="2" height="1" fill="#D35400" />
+                      <rect x="5" y="8" width="1" height="2" fill="#D35400" />
+                      <rect x="18" y="8" width="1" height="2" fill="#D35400" />
+                      <rect x="17" y="12" width="2" height="1" fill="#D35400" />
+                      <rect x="18" y="14" width="2" height="1" fill="#D35400" />
+                      <rect x="9.5" y="9.5" width="5" height="2.5" fill="#FFFFFF" rx="0.5" />
+                      <rect x="11.5" y="10" width="1" height="0.8" fill="#FF8B94" />
+                      <rect x="7" y="19" width="2" height="1" fill="#FFFFFF" />
+                      <rect x="15" y="19" width="2" height="1" fill="#FFFFFF" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="card-name">CheeseYang</div>
+              </div>
+
+              <!-- Raccoon -->
+              <div class="pet-card" data-model="raccoon">
+                <div class="card-preview">
+                  <svg viewBox="0 0 32 32">
+                    <g transform="translate(4,4)">
+                      <!-- Ears -->
+                      <path d="M 8 7 L 5 1.5 L 11 3.5 Z M 24 7 L 27 1.5 L 21 3.5 Z" fill="#9ca3af" stroke="#1E1B18" stroke-width="0.8" />
+                      <path d="M 8.5 6.5 L 6.5 3 L 10.5 4.5 Z" fill="#e5e7eb" />
+                      <path d="M 23.5 6.5 L 25.5 3 L 21.5 4.5 Z" fill="#e5e7eb" />
+                      <!-- Head -->
+                      <ellipse cx="16" cy="11.5" rx="9" ry="7.5" fill="#9ca3af" stroke="#1E1B18" stroke-width="0.8" />
+                      <!-- Mask -->
+                      <path d="M 8 13.5 C 6 12 11 8.5 13.5 9.5 C 14.5 10.5 13.5 13.8 8 13.5 Z" fill="#374151" stroke="#1E1B18" stroke-width="0.8" />
+                      <path d="M 24 13.5 C 26 12 21 8.5 18.5 9.5 C 17.5 10.5 18.5 13.8 24 13.5 Z" fill="#374151" stroke="#1E1B18" stroke-width="0.8" />
+                      <!-- Muzzle -->
+                      <ellipse cx="16" cy="13.2" rx="4.5" ry="3.2" fill="#f3f4f6" stroke="#1E1B18" stroke-width="0.8" />
+                      <!-- Eyes -->
+                      <circle cx="12.0" cy="11.5" r="0.8" fill="#1E1B18" />
+                      <circle cx="20.0" cy="11.5" r="0.8" fill="#1E1B18" />
+                      <!-- Nose & Mouth -->
+                      <polygon points="16,11.6 15,10.4 17,10.4" fill="#111827" />
+                      <path d="M 14.5 12.8 Q 16 14.2 17.5 12.8" fill="none" stroke="#111827" stroke-width="1.0" stroke-linecap="round" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="card-name">Raccoon</div>
+              </div>
+            </div>
           </div>
-          <div class="card-name">Octopus</div>
-        </div>
-        <div class="pet-card" data-model="derpcat">
-          <div class="card-preview">
-            <svg viewBox="0 0 32 32" width="48" height="48">
-              <g transform="translate(4,4)">
-                <path d="M 5 5 L 5 2 H 7 V 5 H 17 V 2 H 19 V 5 V 10 H 22 V 13 H 19 V 14 H 23 V 8 H 21 V 14 H 19 V 17 H 17 V 20 H 15 V 17 H 9 V 20 H 7 V 17 H 5 V 13 H 2 V 10 H 5 Z" fill="#1E1B18" />
-                <rect x="7" y="7" width="3" height="3" fill="#ffffff" />
-                <rect x="14" y="7" width="3" height="3" fill="#ffffff" />
-                <rect x="7" y="7" width="1.2" height="1.2" fill="#000" />
-                <rect x="15.8" y="8.8" width="1.2" height="1.2" fill="#000" />
-              </g>
-            </svg>
+          
+          <div>
+            <div class="section-title">Size (Radius)</div>
+            <div class="size-group">
+              <button class="size-btn" data-size="S">Small (S)</button>
+              <button class="size-btn" data-size="M">Medium (M)</button>
+              <button class="size-btn" data-size="L">Large (L)</button>
+            </div>
           </div>
-          <div class="card-name">Derpy Cat</div>
+          
+          <div>
+            <div class="section-title">Features</div>
+            <div class="toggle-list">
+              <div class="toggle-item">
+                <span>Mouse Follow (따라오기)</span>
+                <label class="switch">
+                  <input type="checkbox" id="follow-toggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="toggle-item">
+                <span>Sleep Mode (낮잠 자기)</span>
+                <label class="switch">
+                  <input type="checkbox" id="sleep-toggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 2. GEMINI API TAB -->
+        <div class="tab-pane" id="tab-gemini">
+          <div>
+            <div class="section-title">Gemini API Key</div>
+            <input type="password" id="api-key-input" class="input-field" placeholder="AI 대화를 활성화하려면 키를 입력하세요">
+            
+            <div style="margin-top: 8px; margin-bottom: 12px; font-size: 10px; color: #9ca3af;">
+              🔑 API Key가 없으시다면? 
+              <a href="#" id="get-api-key-link" style="color: #FF7E5F; text-decoration: underline; font-weight: bold; cursor: pointer;">
+                무료 API Key 발급받기 (Google AI Studio)
+              </a>
+            </div>
+
+            <div class="db-path-container">
+              <span class="db-path-label">💾 로컬 SQLite3 설정 저장 경로:</span>
+              <span class="db-path" id="sqlite-db-path">Loading database path...</span>
+            </div>
+          </div>
+          
+          <div class="info-card">
+            <strong>🔒 로컬 독립 보안 안내</strong><br>
+            입력하신 API 키와 모든 설정 데이터는 외부 서버에 절대 업로드되거나 유출되지 않으며, 오직 귀하의 PC 로컬 드라이브(위 경로)에만 안전하게 보관됩니다.
+          </div>
+        </div>
+        
+        <!-- 3. IDE / AGENT TAB -->
+        <div class="tab-pane" id="tab-agent">
+          <!-- Claude Code -->
+          <div>
+            <button class="btn-integration" id="btn-setup-claude-code">
+              <span>Claude Code CLI 연동</span>
+              <span class="badge-status status-inactive" id="status-claude-code">감지 중...</span>
+            </button>
+            <p class="guide-text" style="margin-top:4px;">
+              클릭 시 Claude Code CLI 환경 설정 파일에 펫 동작용 pre/post 훅 명령을 자동으로 추가합니다.
+            </p>
+          </div>
+
+          <!-- Claude Desktop -->
+          <div>
+            <button class="btn-integration" id="btn-setup-claude-desktop">
+              <span>Claude Desktop App 연동</span>
+              <span class="badge-status status-inactive" id="status-claude-desktop">감지 중...</span>
+            </button>
+            <p class="guide-text" style="margin-top:4px;">
+              클릭 시 Claude Desktop의 MCP 설정에 펫 전용 Stdio 브릿지 구성을 자동으로 추가합니다.
+            </p>
+          </div>
+
+          <!-- Antigravity / Codex -->
+          <div>
+            <div class="section-title">Antigravity / Codex / 기타 툴</div>
+            <p class="guide-text">
+              <strong>Antigravity:</strong> 페어 프로그래밍 세션 시작 시 자동으로 연동되어 작동합니다. (설정 불필요)<br>
+              <strong>Codex / 기타 IDE:</strong> 아래 Webhook API curl 명령어를 IDE 빌드/명령 훅에 등록하면 펫의 상태가 동기화됩니다:
+            </p>
+            <div class="code-box">
+              curl -s -X POST -H "Content-Type: application/json" -d "{\"event\":\"thinking\"}" http://127.0.0.1:18900/event
+            </div>
+          </div>
         </div>
       </div>
     </div>
     
-    <!-- 2. Pet Size -->
-    <div class="settings-section">
-      <div class="section-title">Size</div>
-      <div class="size-group">
-        <button class="size-btn" data-size="S">Small (S)</button>
-        <button class="size-btn" data-size="M">Medium (M)</button>
-        <button class="size-btn" data-size="L">Large (L)</button>
-      </div>
+    <div class="modal-footer">
+      <button id="close-modal-btn" class="save-btn">Done (닫기)</button>
     </div>
-    
-    <!-- 3. Toggles -->
-    <div class="settings-section">
-      <div class="section-title">Features</div>
-      <div class="toggle-list">
-        <div class="toggle-item">
-          <span>Mouse Follow (따라오기)</span>
-          <label class="switch">
-            <input type="checkbox" id="follow-toggle">
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="toggle-item">
-          <span>Sleep Mode (낮잠 자기)</span>
-          <label class="switch">
-            <input type="checkbox" id="sleep-toggle">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-    </div>
-    
-    <!-- 4. Save/Close -->
-    <button id="close-modal-btn" class="save-btn">Done (닫기)</button>
   </div>
 
   <script>
     async function initSettings() {
       if (!window.api) return;
 
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabPanes = document.querySelectorAll('.tab-pane');
       const cards = document.querySelectorAll('.pet-card');
       const sizeBtns = document.querySelectorAll('.size-btn');
       const followToggle = document.getElementById('follow-toggle');
       const sleepToggle = document.getElementById('sleep-toggle');
+      const apiKeyInput = document.getElementById('api-key-input');
       const closeBtn = document.getElementById('close-modal-btn');
-      const xBtn = document.getElementById('close-modal-btn-header'); // close icon if any
+      const headerClose = document.getElementById('close-modal-btn-header');
+      
+      const btnSetupClaudeCode = document.getElementById('btn-setup-claude-code');
+      const btnSetupClaudeDesktop = document.getElementById('btn-setup-claude-desktop');
+      const statusClaudeCode = document.getElementById('status-claude-code');
+      const statusClaudeDesktop = document.getElementById('status-claude-desktop');
+      const sqliteDbPath = document.getElementById('sqlite-db-path');
 
-      // Load settings
+      // 1. Tab switching logic
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabBtns.forEach(b => b.classList.remove('active'));
+          tabPanes.forEach(p => p.classList.remove('active'));
+          
+          btn.classList.add('active');
+          const targetTab = document.getElementById(btn.dataset.tab);
+          if (targetTab) targetTab.classList.add('active');
+        });
+      });
+
+      // 2. Load configurations from SQLite (via IPC)
       const settings = await window.api.getSettings();
       
-      // 1. Model Select
-      const currentModel = settings.model || 'octopus';
+      // 2a. Model Select
+      const currentModel = settings.model || 'clawd';
       cards.forEach(card => {
         if (card.dataset.model === currentModel) card.classList.add('selected');
         card.addEventListener('click', async () => {
@@ -310,7 +707,7 @@
         });
       });
       
-      // 2. Size Select
+      // 2b. Size Select
       const currentSize = settings.size || 'M';
       sizeBtns.forEach(btn => {
         if (btn.dataset.size === currentSize) btn.classList.add('selected');
@@ -321,24 +718,92 @@
         });
       });
       
-      // 3. Follow Toggle
+      // 2c. Follow Toggle
       followToggle.checked = !!settings.followMode;
       followToggle.addEventListener('change', async () => {
         await window.api.updateSettings('followMode', followToggle.checked);
       });
       
-      // 4. Sleep Toggle
+      // 2d. Sleep Toggle
       sleepToggle.checked = !!settings.sleepMode;
       sleepToggle.addEventListener('change', async () => {
         await window.api.updateSettings('sleepMode', sleepToggle.checked);
       });
 
+      // 2e. Gemini API Key Input
+      apiKeyInput.value = settings.geminiApiKey || '';
+      apiKeyInput.addEventListener('change', async () => {
+        await window.api.updateSettings('geminiApiKey', apiKeyInput.value);
+      });
+
+      // 2f. Gemini API Link Open
+      const apiKeyLink = document.getElementById('get-api-key-link');
+      if (apiKeyLink) {
+        apiKeyLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (window.api && window.api.openExternal) {
+            window.api.openExternal('https://aistudio.google.com');
+          }
+        });
+      }
+
+      // 3. Integration Checks & Actions
+      async function updateIntegrationStatus() {
+        try {
+          const status = await window.api.checkIntegrationStatus();
+          sqliteDbPath.textContent = status.dbPath || 'settings.db';
+          
+          // Update Claude Code Badge
+          if (status.claudeCode) {
+            statusClaudeCode.textContent = '연동됨 🟢';
+            statusClaudeCode.className = 'badge-status status-active';
+          } else {
+            statusClaudeCode.textContent = '미연동 🔴';
+            statusClaudeCode.className = 'badge-status status-inactive';
+          }
+
+          // Update Claude Desktop Badge
+          if (status.claudeDesktop) {
+            statusClaudeDesktop.textContent = '연동됨 🟢';
+            statusClaudeDesktop.className = 'badge-status status-active';
+          } else {
+            statusClaudeDesktop.textContent = '미연동 🔴';
+            statusClaudeDesktop.className = 'badge-status status-inactive';
+          }
+        } catch (e) {
+          console.error('Failed to get integration status:', e);
+        }
+      }
+
+      // Initial check
+      await updateIntegrationStatus();
+
+      // Trigger Claude Code Hooks write
+      btnSetupClaudeCode.addEventListener('click', async () => {
+        const res = await window.api.registerClaudeCode();
+        if (res.success) {
+          alert('Claude Code 훅 연동이 완료되었습니다! 🤖🐾');
+        } else {
+          alert('연동 중 오류가 발생했습니다: ' + res.error);
+        }
+        await updateIntegrationStatus();
+      });
+
+      // Trigger Claude Desktop MCP config write
+      btnSetupClaudeDesktop.addEventListener('click', async () => {
+        const res = await window.api.registerClaudeDesktop();
+        if (res.success) {
+          alert('Claude Desktop MCP 연동이 완료되었습니다! 앱을 재시작해 주세요. 🐾✨');
+        } else {
+          alert('연동 중 오류가 발생했습니다: ' + res.error);
+        }
+        await updateIntegrationStatus();
+      });
+
       // Close handlers
       const closeWindow = () => window.api.closeSettings();
-      closeBtn.addEventListener('click', closeWindow);
-      document.getElementById('close-modal-btn').addEventListener('click', closeWindow);
-      
-      const headerClose = document.querySelector('.close-modal');
+      if (closeBtn) closeBtn.addEventListener('click', closeWindow);
       if (headerClose) headerClose.addEventListener('click', closeWindow);
     }
 
