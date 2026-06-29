@@ -364,6 +364,11 @@ ipcMain.handle('close-settings-window', () => {
   }
 });
 
+ipcMain.handle('quit-app', () => {
+  app.isQuitting = true;
+  app.quit();
+});
+
 // --- Auto Updater Logic ---
 let updateAvailable = false;
 let updateInfo = null;

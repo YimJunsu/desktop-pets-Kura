@@ -125,6 +125,11 @@
       color: #E2E8F0;
     }
 
+    .tab-btn.exit-btn:hover {
+      background: rgba(239, 68, 68, 0.15) !important;
+      color: #fca5a5 !important;
+    }
+
     .tab-btn.active {
       background: linear-gradient(135deg, rgba(255, 126, 95, 0.15), rgba(139, 92, 246, 0.15));
       color: #FF7E5F;
@@ -452,6 +457,11 @@
         <button class="tab-btn" data-tab="tab-updater" style="position: relative;">
           🔄 UPDATER
           <span id="updater-badge" class="red-dot hidden" style="position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; background-color: #ef4444; border-radius: 50%;"></span>
+        </button>
+        
+        <!-- Exit Pet Button -->
+        <button class="tab-btn exit-btn" id="exit-pet-btn" style="margin-top: auto; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05);">
+          🛑 펫 종료하기
         </button>
       </div>
       
@@ -929,6 +939,16 @@
       const closeWindow = () => window.api.closeSettings();
       if (closeBtn) closeBtn.addEventListener('click', closeWindow);
       if (headerClose) headerClose.addEventListener('click', closeWindow);
+
+      // Exit App Handler
+      const exitPetBtn = document.getElementById('exit-pet-btn');
+      if (exitPetBtn) {
+        exitPetBtn.addEventListener('click', () => {
+          if (confirm('데스크탑 펫을 정말 종료하시겠습니까?')) {
+            window.api.quitApp();
+          }
+        });
+      }
 
       // Proactive Garbage Collection in settings window renderer
       setInterval(() => {

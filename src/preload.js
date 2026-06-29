@@ -78,6 +78,7 @@ contextBridge.exposeInMainWorld('api', {
   registerClaudeDesktop: () => ipcRenderer.invoke('register-claude-desktop'),
   checkIntegrationStatus: () => ipcRenderer.invoke('check-integration-status'),
   openExternal: (url) => ipcRenderer.invoke('open-external', url),
+  quitApp: () => ipcRenderer.invoke('quit-app'),
   
   // Log helper
   log: (msg) => ipcRenderer.send('log', msg)
