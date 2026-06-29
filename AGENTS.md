@@ -125,6 +125,9 @@ npm run publish
 - NSIS installer로 Windows exe 생성
 - `electron-updater`가 앱 시작 시 GitHub Releases에서 최신 버전 확인 → 자동 다운로드 → 다음 실행 시 적용
 
+### README 버전 동기화
+- **릴리즈 버전 뱃지 일치 규칙**: `package.json`의 앱 버전(`version` 필드)이 변경될 때마다, 반드시 `README.md` 및 `README.ko.md` 상단에 삽입된 릴리즈 버전(Releases 뱃지 URL 변수 및 텍스트)을 최신 버전과 완벽히 일치하도록 수정하여 푸시해야 합니다.
+
 ## 자주 참고할 레퍼런스
 
 - clawd-on-desk 구조: https://github.com/rullerzhou-afk/clawd-on-desk
