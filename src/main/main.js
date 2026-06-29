@@ -2,11 +2,19 @@ const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const { autoUpdater } = require('electron-updater');
 
-// Expose V8 garbage collector and limit cache sizes to reduce idle memory footprints (max 130MB limit)
+// Disable hardware acceleration to completely eliminate heavy GPU processes
+app.disableHardwareAcceleration();
+
+// Expose V8 garbage collector and limit cache sizes to reduce idle memory footprints
 app.commandLine.appendSwitch('disable-gpu-program-cache');
 app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
-app.commandLine.appendSwitch('js-flags', '--expose-gc --max-semi-space-size=1 --max-old-space-size=64');
+app.commandLine.appendSwitch('disable-webgl');
+app.commandLine.appendSwitch('disable-webgl2');
+app.commandLine.appendSwitch('disable-accelerated-2d-canvas');
+app.commandLine.appendSwitch('renderer-process-limit', '1');
+app.commandLine.appendSwitch('js-flags', '--expose-gc --max-semi-space-size=1 --max-old-space-size=32 --lite-mode');
 
 const { initDatabase, getSettings, updateSetting, dbPath } = require('./db');
 const { registerClaudeHooks } = require('../hooks/claude-code');
@@ -18,6 +26,15 @@ if (!gotTheLock) {
   app.quit();
   process.exit(0);
 }
+
+// Periodic Garbage Collection in the main process to proactively reclaim RAM
+setInterval(() => {
+  if (global.gc) {
+    try {
+      global.gc();
+    } catch (e) {}
+  }
+}, 30000); // every 30 seconds
 
 let mainWindow = null;
 let settingsData = {}; // Memory cache of SQLite settings
@@ -334,6 +351,9 @@ ipcMain.handle('open-settings-window', () => {
 
   settingsWindow.on('closed', () => {
     settingsWindow = null;
+    if (global.gc) {
+      try { global.gc(); } catch (e) {}
+    }
   });
 });
 
@@ -342,6 +362,83 @@ ipcMain.handle('close-settings-window', () => {
     settingsWindow.close();
     settingsWindow = null;
   }
+});
+
+// --- Auto Updater Logic ---
+let updateAvailable = false;
+let updateInfo = null;
+
+autoUpdater.autoDownload = false;
+
+autoUpdater.on('update-available', (info) => {
+  updateAvailable = true;
+  updateInfo = info;
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('update-available', info);
+  }
+});
+
+autoUpdater.on('update-not-available', () => {
+  updateAvailable = false;
+  updateInfo = null;
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('update-not-available');
+  }
+});
+
+autoUpdater.on('error', (err) => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('update-error', err.message);
+  }
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  const windows = BrowserWindow.getAllWindows();
+  for (const win of windows) {
+    if (!win.isDestroyed()) {
+      win.webContents.send('update-download-progress', progressObj.percent);
+    }
+  }
+});
+
+autoUpdater.on('update-downloaded', () => {
+  const windows = BrowserWindow.getAllWindows();
+  for (const win of windows) {
+    if (!win.isDestroyed()) {
+      win.webContents.send('update-downloaded');
+    }
+  }
+});
+
+// IPC Handlers for Auto Updater
+ipcMain.handle('check-for-updates', async () => {
+  try {
+    const result = await autoUpdater.checkForUpdates();
+    return { success: true, updateInfo: result ? result.updateInfo : null };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('download-update', async () => {
+  try {
+    await autoUpdater.downloadUpdate();
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('quit-and-install', () => {
+  autoUpdater.quitAndInstall();
+});
+
+ipcMain.handle('get-update-status', () => {
+  return {
+    available: updateAvailable,
+    info: updateInfo,
+    version: app.getVersion()
+  };
 });
 
 let loadingWindow = null;
@@ -399,6 +496,11 @@ app.whenReady().then(async () => {
     // Create tray icon
     const { createTray } = require('./tray');
     createTray(mainWindow, settingsData);
+
+    // Proactively check for updates on startup
+    autoUpdater.checkForUpdates().catch(err => {
+      console.error('Startup auto-update check failed:', err.message);
+    });
   }, 1500);
 
   app.on('activate', () => {

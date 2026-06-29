@@ -28,11 +28,13 @@
   "build": {
     "appId": "com.kuro.desktop-pet",
     "productName": "Kuro Desktop Pet",
+    "npmRebuild": false,
     "directories": {
       "output": "dist"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "assets/app-icon.png"
     },
     "nsis": {
       "oneClick": true,
@@ -41,8 +43,8 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "rullerzhou-afk",
-      "repo": "clawd-on-desk"
+      "owner": "YimJunsu",
+      "repo": "desktop-pets-Kura"
     }
   }
 }

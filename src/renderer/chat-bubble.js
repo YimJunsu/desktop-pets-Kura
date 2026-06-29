@@ -268,4 +268,9 @@ class ChatBubble {
     
     return reply.trim();
   }
+
+  showSystemMessage(text) {
+    this.show();
+    this.messagesDiv.innerHTML = `<div class="system-msg">${text}</div>`;
+  }
 }

@@ -431,6 +431,9 @@
       box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
       filter: brightness(1.1);
     }
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
@@ -446,6 +449,10 @@
         <button class="tab-btn active" data-tab="tab-pet">🐾 PET</button>
         <button class="tab-btn" data-tab="tab-gemini">🔑 Gemini API</button>
         <button class="tab-btn" data-tab="tab-agent">🤖 IDE / Agent</button>
+        <button class="tab-btn" data-tab="tab-updater" style="position: relative;">
+          🔄 UPDATER
+          <span id="updater-badge" class="red-dot hidden" style="position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; background-color: #ef4444; border-radius: 50%;"></span>
+        </button>
       </div>
       
       <!-- Content Area -->
@@ -653,6 +660,38 @@
             </div>
           </div>
         </div>
+
+        <!-- 4. UPDATER TAB -->
+        <div class="tab-pane" id="tab-updater">
+          <div>
+            <div class="section-title">App Version & Update</div>
+            <div class="info-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11px; color: #CBD5E1;">
+                <span>현재 버전 (Current Version):</span>
+                <strong id="current-version">v1.0.0</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11px; color: #CBD5E1;">
+                <span>최신 버전 (Latest Version):</span>
+                <strong id="latest-version">Checking...</strong>
+              </div>
+              <div id="update-msg" style="margin-top: 10px; font-size: 10px; color: #9ca3af; line-height: 1.4;">
+                최신 버전 정보를 확인 중입니다...
+              </div>
+            </div>
+            
+            <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+              <button class="btn-integration" id="btn-check-updates" style="width: 100%; text-align: center; justify-content: center; padding: 10px 0; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer;">
+                🔄 업데이트 확인하기 (Check for Updates)
+              </button>
+              <button class="btn-integration hidden" id="btn-download-update" style="width: 100%; text-align: center; justify-content: center; padding: 10px 0; background: linear-gradient(135deg, #10B981, #059669); color: white; border-color: #059669; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer;">
+                ⬇️ 신버전 다운로드 (Download Update)
+              </button>
+              <button class="btn-integration hidden" id="btn-restart-update" style="width: 100%; text-align: center; justify-content: center; padding: 10px 0; background: linear-gradient(135deg, #3B82F6, #2563EB); color: white; border-color: #2563EB; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer;">
+                ⚡ 재시작하여 업데이트 적용 (Restart & Apply)
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     
@@ -801,10 +840,102 @@
         await updateIntegrationStatus();
       });
 
+      // --- Updater Integration ---
+      const updaterBadge = document.getElementById('updater-badge');
+      const currentVersion = document.getElementById('current-version');
+      const latestVersion = document.getElementById('latest-version');
+      const updateMsg = document.getElementById('update-msg');
+      const btnCheckUpdates = document.getElementById('btn-check-updates');
+      const btnDownloadUpdate = document.getElementById('btn-download-update');
+      const btnRestartUpdate = document.getElementById('btn-restart-update');
+
+      async function syncUpdaterUI() {
+        if (!window.api) return;
+        const status = await window.api.getUpdateStatus();
+        currentVersion.textContent = 'v' + status.version;
+        
+        if (status.available) {
+          updaterBadge.classList.remove('hidden');
+          latestVersion.textContent = 'v' + status.info.version;
+          updateMsg.textContent = `새로운 버전 v${status.info.version}이 발견되었습니다. 다운로드 버튼을 눌러주세요!`;
+          btnCheckUpdates.classList.add('hidden');
+          btnDownloadUpdate.classList.remove('hidden');
+        } else {
+          updaterBadge.classList.add('hidden');
+          latestVersion.textContent = 'v' + status.version;
+          updateMsg.textContent = '현재 최신 버전을 사용 중입니다.';
+          btnCheckUpdates.classList.remove('hidden');
+          btnDownloadUpdate.classList.add('hidden');
+        }
+      }
+
+      await syncUpdaterUI();
+
+      btnCheckUpdates.addEventListener('click', async () => {
+        updateMsg.textContent = '업데이트 서버를 확인하고 있습니다...';
+        const res = await window.api.checkForUpdates();
+        if (res.success) {
+          if (res.updateInfo) {
+            latestVersion.textContent = 'v' + res.updateInfo.version;
+            updateMsg.textContent = `새로운 버전 v${res.updateInfo.version}이 있습니다! 다운로드 해주세요.`;
+            btnCheckUpdates.classList.add('hidden');
+            btnDownloadUpdate.classList.remove('hidden');
+            updaterBadge.classList.remove('hidden');
+          } else {
+            updateMsg.textContent = '현재 최신 버전을 사용 중입니다.';
+          }
+        } else {
+          updateMsg.textContent = '업데이트 확인 실패: ' + res.error;
+        }
+      });
+
+      btnDownloadUpdate.addEventListener('click', async () => {
+        updateMsg.textContent = '업데이트 패키지 다운로드를 시작합니다...';
+        btnDownloadUpdate.disabled = true;
+        const res = await window.api.downloadUpdate();
+        if (!res.success) {
+          updateMsg.textContent = '다운로드 실패: ' + res.error;
+          btnDownloadUpdate.disabled = false;
+        }
+      });
+
+      btnRestartUpdate.addEventListener('click', () => {
+        window.api.quitAndInstall();
+      });
+
+      // Bind dynamic status updates
+      if (window.api.onUpdateProgress) {
+        window.api.onUpdateProgress((percent) => {
+          updateMsg.textContent = `다운로드 진행 중... ${Math.round(percent)}%`;
+        });
+      }
+
+      if (window.api.onUpdateDownloaded) {
+        window.api.onUpdateDownloaded(() => {
+          updateMsg.textContent = '다운로드 완료! 업데이트를 적용하려면 재시작 버튼을 눌러주세요.';
+          btnDownloadUpdate.classList.add('hidden');
+          btnRestartUpdate.classList.remove('hidden');
+        });
+      }
+
+      if (window.api.onUpdateError) {
+        window.api.onUpdateError((msg) => {
+          updateMsg.textContent = '업데이트 에러: ' + msg;
+          btnDownloadUpdate.disabled = false;
+        });
+      }
+
       // Close handlers
       const closeWindow = () => window.api.closeSettings();
       if (closeBtn) closeBtn.addEventListener('click', closeWindow);
       if (headerClose) headerClose.addEventListener('click', closeWindow);
+
+      // Proactive Garbage Collection in settings window renderer
+      setInterval(() => {
+        if (window.gc) {
+          try { window.gc(); } catch (e) {}
+        }
+      }, 5000);
     }
 
     window.addEventListener('DOMContentLoaded', initSettings);

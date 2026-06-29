@@ -223,6 +223,31 @@ class PetRenderer {
         }
       }
     });
+
+    // Listen to update availability from main process
+    if (window.api.onUpdateAvailable) {
+      window.api.onUpdateAvailable((info) => {
+        // Add red dot next to settings gear
+        const gear = document.getElementById('settings-gear');
+        if (gear && !gear.querySelector('.red-dot')) {
+          const dot = document.createElement('span');
+          dot.className = 'red-dot';
+          dot.style.position = 'absolute';
+          dot.style.top = '-2px';
+          dot.style.right = '-2px';
+          dot.style.width = '6px';
+          dot.style.height = '6px';
+          dot.style.backgroundColor = '#ef4444';
+          dot.style.borderRadius = '50%';
+          gear.appendChild(dot);
+        }
+        
+        // Alert user via chat bubble speech
+        if (this.chatBubble) {
+          this.chatBubble.showSystemMessage(`새로운 업데이트 버전 v${info.version}이 있습니다! 설정(⚙️)의 Updater 탭을 확인해 주세요. 🐾✨`);
+        }
+      });
+    }
   }
 }
 
@@ -232,4 +257,13 @@ window.addEventListener('DOMContentLoaded', () => {
   renderer.init().then(() => {
     console.log('Pet renderer initialized successfully.');
   });
+
+  // Proactive Garbage Collection in the renderer process to keep RAM usage minimal
+  setInterval(() => {
+    if (window.gc) {
+      try {
+        window.gc();
+      } catch (e) {}
+    }
+  }, 30000); // every 30 seconds
 });
