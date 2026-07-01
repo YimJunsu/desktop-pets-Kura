@@ -30,22 +30,23 @@ class Animator {
     const model = this.renderer.settings.model || 'clawd';
     const path = `../../assets/sprites/${model}/${fileName}.svg`;
     
+    // 1. Fade out (50ms)
+    this.container.style.transition = 'opacity 0.05s ease';
+    this.container.style.opacity = '0';
+
     try {
-      // 1. Fade out (50ms)
-      this.container.style.transition = 'opacity 0.05s ease';
-      this.container.style.opacity = '0';
-      
-      // Load/Fetch SVG
+      // Try to load as SVG first
       const svgText = await this.loadSVG(path);
       
       // Wait for fade out to complete
       await new Promise(resolve => setTimeout(resolve, 50));
       
-      // 2. Inject SVG content, preserving other elements like settings gear
+      // Clear existing renders
       const existingSvg = this.container.querySelector('svg');
-      if (existingSvg) {
-        existingSvg.remove();
-      }
+      const existingImg = this.container.querySelector('img.pet-gif');
+      if (existingSvg) existingSvg.remove();
+      if (existingImg) existingImg.remove();
+      
       const parser = new DOMParser();
       const doc = parser.parseFromString(svgText, 'image/svg+xml');
       const newSvg = doc.querySelector('svg');
@@ -64,10 +65,61 @@ class Animator {
         this.renderer.eyeTracker.onSVGLoaded();
       }
     } catch (err) {
-      console.error(`Failed to load animation: ${name}`, err);
-      // Fallback to error state if not already there
-      if (name !== 'error') {
-        this.setAnimation('error');
+      // SVG load failed - Fallback to transparent GIF
+      const gifPath = `../../assets/sprites/${model}/${fileName}.gif`;
+      console.log(`[Animator] SVG not found for state '${name}'. Falling back to GIF: ${gifPath}`);
+      
+      try {
+        // Wait for fade out to complete
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        // Clear existing renders
+        const existingSvg = this.container.querySelector('svg');
+        const existingImg = this.container.querySelector('img.pet-gif');
+        if (existingSvg) existingSvg.remove();
+        if (existingImg) existingImg.remove();
+        
+        // Inject <img> element pointing to transparent GIF
+        const imgEl = document.createElement('img');
+        imgEl.src = gifPath;
+        imgEl.className = 'pet-gif';
+        imgEl.style.width = '100%';
+        imgEl.style.height = '100%';
+        imgEl.style.objectFit = 'contain';
+        this.container.appendChild(imgEl);
+        
+        // Re-apply flip direction
+        this.applyFlip();
+        
+        // Fade in
+        this.container.style.opacity = '1';
+      } catch (gifErr) {
+        console.error(`Failed to load GIF fallback for ${name}:`, gifErr);
+        
+        // Final fallback: Load default 'blackyang' error.svg to prevent blank screen
+        if (name !== 'error') {
+          console.log('[Animator] Triggering ultimate error fallback state...');
+          this.setAnimation('error');
+        } else {
+          // If even error fallback fails, load blackyang/error.svg
+          const ultimateFallbackPath = `../../assets/sprites/blackyang/error.svg`;
+          try {
+            const ultimateSvgText = await this.loadSVG(ultimateFallbackPath);
+            const existingSvg = this.container.querySelector('svg');
+            const existingImg = this.container.querySelector('img.pet-gif');
+            if (existingSvg) existingSvg.remove();
+            if (existingImg) existingImg.remove();
+            
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(ultimateSvgText, 'image/svg+xml');
+            const newSvg = doc.querySelector('svg');
+            if (newSvg) this.container.appendChild(newSvg);
+            this.applyFlip();
+            this.container.style.opacity = '1';
+          } catch (e) {
+            console.error('Ultimate fallback failure:', e);
+          }
+        }
       }
     }
   }
@@ -79,6 +131,7 @@ class Animator {
     
     if (window.api && typeof window.api.loadSVG === 'function') {
       const text = await window.api.loadSVG(path);
+      if (!text) throw new Error('SVG not found on disk');
       this.svgCache[path] = text;
       return text;
     } else {
@@ -98,11 +151,15 @@ class Animator {
 
   applyFlip() {
     const svg = this.container.querySelector('svg');
-    if (svg) {
+    const img = this.container.querySelector('img.pet-gif');
+    const target = svg || img;
+    if (target) {
       if (this.isFlipped) {
-        svg.classList.add('flipped');
+        target.classList.add('flipped');
+        target.style.transform = 'scaleX(-1)';
       } else {
-        svg.classList.remove('flipped');
+        target.classList.remove('flipped');
+        target.style.transform = 'scaleX(1)';
       }
     }
   }

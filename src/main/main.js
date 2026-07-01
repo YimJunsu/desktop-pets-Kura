@@ -264,10 +264,9 @@ ipcMain.handle('load-svg', async (event, relativePath) => {
     if (fs.existsSync(safePath)) {
       return fs.readFileSync(safePath, 'utf8');
     }
-    throw new Error(`File not found: ${safePath}`);
+    return null;
   } catch (err) {
-    console.error('Error loading SVG:', err);
-    throw err;
+    return null;
   }
 });
 
