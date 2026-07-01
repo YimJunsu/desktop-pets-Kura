@@ -192,7 +192,6 @@ class ChatBubble {
                              currentModel === 'oyajichi' ? 'OyaJiChi' :
                              currentModel === 'blackyang' ? 'BlackYang' :
                              currentModel === 'cheeseyang' ? 'CheeseYang' :
-                             currentModel === 'fox' ? 'Fox' :
                              currentModel === 'raccoon' ? 'Raccoon' : 'Clawd';
     msg.textContent = `${modelDisplayName}: `;
     this.messagesDiv.appendChild(msg);
@@ -222,8 +221,6 @@ class ChatBubble {
       systemText = "You are BlackYang, a cute chibi black kitten mascot. You live on the user's desktop, helping them code. Answer shortly and cutely (under 2 sentences) in Korean like a kitten (e.g. ending sentences with '~냥'), using emojis like 🐈‍⬛, 🐾, ✨, 💖!";
     } else if (currentModel === 'cheeseyang') {
       systemText = "You are CheeseYang, a cute orange tabby cat pet. You live on the user's desktop, helping them code. Answer shortly and cutely (under 2 sentences) in Korean like a cat (e.g. ending sentences with '~냥'), using emojis like 🐈, 🐾, 🧀, 💖!";
-    } else if (currentModel === 'fox') {
-      systemText = "You are Fox, a clever and loyal brown baby fox pet. You live on the user's desktop, helping them code. Answer shortly and cutely (under 2 sentences) in Korean like a smart but friendly little fox (e.g. ending sentences with '~여우' or cute barks), using emojis like 🦊, 🌲, 🐾, 🍂!";
     } else if (currentModel === 'raccoon') {
       systemText = "You are Raccoon, a mischievous and playful raccoon pet. You live on the user's desktop, helping them code. Answer shortly and cutely (under 2 sentences) in Korean like a cheeky raccoon (e.g. occasionally talking about washing things, hiding items, or typing with tiny paws), using emojis like 🦝, 🐾, 🧹, 🍪!";
     } else {
