@@ -213,6 +213,10 @@ class SleepingState extends BaseState {
 
 class TypingState extends BaseState {
   enter() {
+    if (this.machine.renderer.container) {
+      this.machine.renderer.container.classList.add('typing-active');
+    }
+    
     // Automatically transition back to idle after typing stops
     this.timeout = setTimeout(() => {
       if (this.machine.currentStateName === 'typing') {
@@ -221,6 +225,9 @@ class TypingState extends BaseState {
     }, 3000);
   }
   exit() {
+    if (this.machine.renderer.container) {
+      this.machine.renderer.container.classList.remove('typing-active');
+    }
     if (this.timeout) clearTimeout(this.timeout);
   }
 }

@@ -388,3 +388,13 @@ body {
   font-weight: bold;
   color: #374151;
 }
+
+/* Typing bounce animation for active interaction */
+@keyframes typing-bounce {
+  0%, 100% { transform: translateY(0) scaleY(1) translateX(-50%); }
+  50% { transform: translateY(-10px) scaleY(0.9) translateX(-50%); }
+}
+
+#pet-container.typing-active {
+  animation: typing-bounce 0.25s infinite ease-in-out;
+}
