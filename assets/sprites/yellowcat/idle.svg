@@ -1,0 +1,46 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1" flood-color="#000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+  <style>
+    @keyframes blink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+    .pupil {
+      transform-origin: center;
+      transition: transform 0.1s ease-out;
+    }
+    .eye-socket {
+      animation: blink 4s infinite;
+      transform-origin: center;
+    }
+  </style>
+  <g transform="translate(4, 4)">
+    <!-- White Sticker Outline -->
+    <path d="M 5 5 L 5 2 H 7 V 5 H 17 V 2 H 19 V 5 V 10 H 22 V 13 H 19 V 14 H 23 V 8 H 21 V 14 H 19 V 17 H 17 V 20 H 15 V 17 H 9 V 20 H 7 V 17 H 5 V 13 H 2 V 10 H 5 Z" 
+          fill="#ffffff" 
+          stroke="#ffffff" 
+          stroke-width="1.6" 
+          stroke-linejoin="miter" 
+          filter="url(#shadow)" />
+    
+    <!-- Dark grey body -->
+    <path d="M 5 5 L 5 2 H 7 V 5 H 17 V 2 H 19 V 5 V 10 H 22 V 13 H 19 V 14 H 23 V 8 H 21 V 14 H 19 V 17 H 17 V 20 H 15 V 17 H 9 V 20 H 7 V 17 H 5 V 13 H 2 V 10 H 5 Z" 
+          fill="#FEB47B" />
+
+    <!-- Derpy Eyes -->
+    <!-- Left Eye Socket -->
+    <rect class="eye-socket" x="7" y="7" width="3" height="3" fill="#ffffff" />
+    <!-- Right Eye Socket -->
+    <rect class="eye-socket" x="14" y="7" width="3" height="3" fill="#ffffff" />
+    
+    <!-- Pupils (separated for tracking, offset for derpiness) -->
+    <g id="eyes">
+      <rect id="left-eye" class="pupil" x="7" y="7" width="1.2" height="1.2" fill="#000000" />
+      <rect id="right-eye" class="pupil" x="15.8" y="8.8" width="1.2" height="1.2" fill="#000000" />
+    </g>
+  </g>
+</svg>
