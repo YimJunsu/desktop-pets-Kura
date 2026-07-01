@@ -75,10 +75,11 @@ class ChatBubble {
   show() {
     this.isVisible = true;
 
-    // Dynamic height spacing depending on pet size setting (S, M, L)
+    // Dynamic height spacing depending on pet size setting (XS, S, M, L)
     const petSize = this.renderer.settings.size || 'M';
     let bottomOffset = 218; // Default M
-    if (petSize === 'S') bottomOffset = 154;
+    if (petSize === 'XS') bottomOffset = 122;
+    else if (petSize === 'S') bottomOffset = 154;
     else if (petSize === 'L') bottomOffset = 282;
     this.container.style.bottom = `${bottomOffset}px`;
 

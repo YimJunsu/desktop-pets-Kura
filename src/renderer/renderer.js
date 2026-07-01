@@ -84,8 +84,9 @@ class PetRenderer {
   updatePetSize(sizeStr) {
     const container = document.getElementById('pet-container');
     let pixels = 192;
-    if (sizeStr === 'S') pixels = 128;
-    if (sizeStr === 'L') pixels = 256;
+    if (sizeStr === 'XS') pixels = 96;
+    else if (sizeStr === 'S') pixels = 128;
+    else if (sizeStr === 'L') pixels = 256;
     
     container.style.width = `${pixels}px`;
     container.style.height = `${pixels}px`;

@@ -14,6 +14,7 @@ class DragHandler {
     // Position of window when drag started
     this.winStartX = 0;
     this.winStartY = 0;
+    this.activePointerId = null;
     
     // For velocity calculation (stretch physics)
     this.lastX = 0;
@@ -40,6 +41,7 @@ class DragHandler {
       if (e.button !== 0) return;
       
       this.isDragging = true;
+      this.activePointerId = e.pointerId;
       this.container.setPointerCapture(e.pointerId);
       
       // Record initial mouse screen position (via screen because window moves)
@@ -102,6 +104,7 @@ class DragHandler {
       if (!this.isDragging) return;
       
       this.isDragging = false;
+      this.activePointerId = null;
       this.container.releasePointerCapture(e.pointerId);
       
       // Check if mouse is still hovering over the container
@@ -117,6 +120,42 @@ class DragHandler {
       }
       
       // Transition back to idle only if not in custom states that handle their own auto-restores
+      const current = this.renderer.stateMachine.currentStateName;
+      if (current !== 'happy' && current !== 'sad' && current !== 'error') {
+        this.renderer.stateMachine.setState('idle');
+      }
+      this.renderer.stateMachine.resetInactivity();
+    });
+
+    // Pointercancel recovery
+    this.container.addEventListener('pointercancel', (e) => {
+      if (!this.isDragging) return;
+      
+      this.isDragging = false;
+      this.activePointerId = null;
+      try {
+        this.container.releasePointerCapture(e.pointerId);
+      } catch (err) {}
+      
+      const current = this.renderer.stateMachine.currentStateName;
+      if (current !== 'happy' && current !== 'sad' && current !== 'error') {
+        this.renderer.stateMachine.setState('idle');
+      }
+      this.renderer.stateMachine.resetInactivity();
+    });
+
+    // Window blur (focus loss, e.g. screenshot overlay triggered) recovery
+    window.addEventListener('blur', () => {
+      if (!this.isDragging) return;
+      
+      this.isDragging = false;
+      if (this.activePointerId !== null) {
+        try {
+          this.container.releasePointerCapture(this.activePointerId);
+        } catch (err) {}
+        this.activePointerId = null;
+      }
+      
       const current = this.renderer.stateMachine.currentStateName;
       if (current !== 'happy' && current !== 'sad' && current !== 'error') {
         this.renderer.stateMachine.setState('idle');

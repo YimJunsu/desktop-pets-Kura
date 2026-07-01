@@ -63,6 +63,7 @@ function startCursorPolling(intervalMs) {
 
 function getWindowSize(sizeStr) {
   switch (sizeStr) {
+    case 'XS': return { width: 260, height: 250, petSize: 96 };
     case 'S': return { width: 290, height: 300, petSize: 128 };
     case 'L': return { width: 400, height: 460, petSize: 256 };
     case 'M':
@@ -501,10 +502,12 @@ app.whenReady().then(async () => {
     const { createTray } = require('./tray');
     createTray(mainWindow, settingsData);
 
-    // Proactively check for updates on startup
-    autoUpdater.checkForUpdates().catch(err => {
-      console.error('Startup auto-update check failed:', err.message);
-    });
+    // Proactively check for updates on startup only if packaged
+    if (app.isPackaged) {
+      autoUpdater.checkForUpdates().catch(err => {
+        console.error('Startup auto-update check failed:', err.message);
+      });
+    }
   }, 1500);
 
   app.on('activate', () => {
