@@ -1,0 +1,56 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1" flood-color="#000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+  <style>
+    @keyframes blink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+    .pupil {
+      transform-origin: center;
+      transition: transform 0.1s ease-out;
+    }
+    .eye-socket {
+      animation: blink 4s infinite;
+      transform-origin: center;
+    }
+  </style>
+  <g transform="translate(4, 4)">
+    <!-- White Sticker Outline for Fox -->
+    <path d="M 5 5 L 4 1 H 8 V 5 H 16 V 1 H 20 V 5 V 10 H 22 V 13 H 19 V 15 H 23 V 18 H 17 V 20 H 15 V 17 H 9 V 20 H 7 V 17 H 5 V 13 H 2 V 10 H 5 Z" 
+          fill="#ffffff" 
+          stroke="#ffffff" 
+          stroke-width="1.6" 
+          stroke-linejoin="miter" 
+          filter="url(#shadow)" />
+    
+    <!-- Orange-brown fox body -->
+    <path d="M 5 5 L 4 1 H 8 V 5 H 16 V 1 H 20 V 5 V 10 H 22 V 13 H 19 V 15 H 23 V 18 H 17 V 20 H 15 V 17 H 9 V 20 H 7 V 17 H 5 V 13 H 2 V 10 H 5 Z" 
+          fill="#D36A3B" />
+          
+    <!-- Inner Ears (cream white) -->
+    <polygon points="5,4 7,4 6,2" fill="#F1E3D3" />
+    <polygon points="17,4 19,4 18,2" fill="#F1E3D3" />
+    
+    <!-- Cream white breast fur -->
+    <path d="M 9 12 L 12 15 L 15 12 L 13 10 L 11 10 Z" fill="#F5EFE6" />
+    
+    <!-- Bushy Tail Tip (cream white) -->
+    <path d="M 19 14 L 23 18 H 20 Z" fill="#F5EFE6" />
+
+    <!-- Derpy Eyes -->
+    <!-- Left Eye Socket -->
+    <rect class="eye-socket" x="7" y="7" width="3" height="3" fill="#ffffff" />
+    <!-- Right Eye Socket -->
+    <rect class="eye-socket" x="14" y="7" width="3" height="3" fill="#ffffff" />
+    
+    <!-- Pupils (separated for tracking, offset for derpiness) -->
+    <g id="eyes">
+      <rect id="left-eye" class="pupil" x="7" y="7" width="1.2" height="1.2" fill="#000000" />
+      <rect id="right-eye" class="pupil" x="15.8" y="8.8" width="1.2" height="1.2" fill="#000000" />
+    </g>
+  </g>
+</svg>

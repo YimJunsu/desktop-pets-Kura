@@ -31,6 +31,36 @@ class StateMachine {
   init() {
     this.setState('idle');
     this.startInactivityTracker();
+    
+    // Bind global input event listener to capture global keyboard events
+    if (window.api && window.api.onGlobalInput) {
+      window.api.onGlobalInput((data) => {
+        if (data.type === 'typing') {
+          if (
+            this.currentStateName === 'grabbed' ||
+            this.currentStateName === 'sleeping' ||
+            this.renderer.isAgentSessionActive
+          ) {
+            return;
+          }
+          
+          this.resetInactivity();
+          
+          if (this.currentStateName !== 'typing') {
+            this.setState('typing');
+          } else {
+            // Reset typing timeout if already typing to continue the animation loop
+            const typingStateInstance = this.states.typing;
+            if (typingStateInstance && typingStateInstance.timeout) {
+              clearTimeout(typingStateInstance.timeout);
+              typingStateInstance.enter();
+            }
+          }
+        } else if (data.type === 'mousemove') {
+          this.resetInactivity();
+        }
+      });
+    }
   }
 
   setState(stateName) {
