@@ -20,9 +20,12 @@ const { initDatabase, getSettings, updateSetting, dbPath } = require('./db');
 const { registerClaudeHooks } = require('../hooks/claude-code');
 const { registerClaudeDesktopHooks } = require('../hooks/claude-desktop');
 
+let isDuplicateInstance = false;
+
 // Single Instance Application Lock
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
+  isDuplicateInstance = true;
   const { dialog } = require('electron');
   dialog.showErrorBox(
     'Kuro Desktop Pet',
@@ -43,6 +46,7 @@ setInterval(() => {
 
 let mainWindow = null;
 let settingsData = {}; // Memory cache of SQLite settings
+let loadingGuardTimeout = null; // Guard to close splash window if app stalls
 
 app.on('second-instance', () => {
   if (mainWindow) {
@@ -164,6 +168,11 @@ function createMainWindow() {
 
   mainWindow.once('ready-to-show', () => {
     startCursorPolling(80); // Default optimized active polling
+
+    if (loadingGuardTimeout) {
+      clearTimeout(loadingGuardTimeout);
+      loadingGuardTimeout = null;
+    }
 
     // Safely close the splash loading window once the main window is ready to show
     if (loadingWindow && !loadingWindow.isDestroyed()) {
@@ -488,7 +497,21 @@ ipcMain.on('log', (event, msg) => {
 
 // App lifecycle
 app.whenReady().then(async () => {
+  if (isDuplicateInstance) return; // Prevent splash loading on duplicate instances
   createLoadingWindow();
+
+  // Fail-safe: Force close loading splash screen after 7 seconds if the main window crashes or stalls
+  loadingGuardTimeout = setTimeout(() => {
+    if (loadingWindow && !loadingWindow.isDestroyed()) {
+      loadingWindow.close();
+      loadingWindow = null;
+      const { dialog } = require('electron');
+      dialog.showErrorBox(
+        'Kuro Desktop Pet 실행 오류',
+        '데스크탑 펫 메인 화면을 소환하는 도중 지연 또는 예외가 발생했습니다.\n\n프로그램을 완전히 종료한 후 다시 실행해 주시기 바랍니다.'
+      );
+    }
+  }, 7000);
 
   try {
     // 1. Initialize SQLite Database

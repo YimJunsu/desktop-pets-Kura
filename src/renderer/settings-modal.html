@@ -885,19 +885,26 @@
       btnCheckUpdates.addEventListener('click', async () => {
         updateMsg.textContent = '업데이트 서버를 확인하고 있습니다...';
         const res = await window.api.checkForUpdates();
+        const status = await window.api.getUpdateStatus();
+        const localVer = status.version;
+        
         if (res.success) {
-          if (res.updateInfo) {
+          if (res.updateInfo && res.updateInfo.version !== localVer) {
             latestVersion.textContent = 'v' + res.updateInfo.version;
             updateMsg.textContent = `새로운 버전 v${res.updateInfo.version}이 있습니다! 다운로드 해주세요.`;
             btnCheckUpdates.classList.add('hidden');
             btnDownloadUpdate.classList.remove('hidden');
             updaterBadge.classList.remove('hidden');
           } else {
-            updateMsg.textContent = '현재 최신 버전을 사용 중입니다.';
+            latestVersion.textContent = 'v' + localVer;
+            updateMsg.textContent = `현재 최신 버전(v${localVer})을 사용 중입니다.`;
+            btnCheckUpdates.classList.remove('hidden');
+            btnDownloadUpdate.classList.add('hidden');
+            updaterBadge.classList.add('hidden');
           }
         } else {
           if (res.error && (res.error.includes('404') || res.error.includes('authentication token'))) {
-            updateMsg.innerHTML = '<span style="color: #f87171; font-weight: bold;">업데이트 서버 정보 확인 대기 중 ⚠️</span><br>깃허브 저장소 Releases 탭에 첫 번째 배포 버전(v1.0.0 등)이 업로드되어 있지 않거나 프라이빗 저장소인 경우 발생할 수 있습니다. 제작자에게 문의바랍니다.';
+            updateMsg.innerHTML = '<span style="color: #f87171; font-weight: bold;">업데이트 서버 정보 확인 대기 중 ⚠️</span><br>깃허브 저장소 Releases 탭에 첫 번째 배포 버전(v1.0.0 등)이 업로드되어 있지 않거나 프라이빗 저장소인 경우 발생할 수 있습니다. 최초 릴리즈를 깃허브에 등록한 후 다시 시도해 주세요.';
           } else {
             updateMsg.textContent = '업데이트 확인 실패: ' + res.error;
           }
