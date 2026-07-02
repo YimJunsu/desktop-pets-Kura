@@ -470,6 +470,7 @@ function createLoadingWindow() {
     frame: false,
     resizable: false,
     alwaysOnTop: true,
+    skipTaskbar: true, // Hide from taskbar and Alt-Tab switcher!
     center: true,
     show: false,
     webPreferences: {
