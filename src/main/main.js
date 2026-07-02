@@ -23,6 +23,11 @@ const { registerClaudeDesktopHooks } = require('../hooks/claude-desktop');
 // Single Instance Application Lock
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
+  const { dialog } = require('electron');
+  dialog.showErrorBox(
+    'Kuro Desktop Pet',
+    '데스크탑 펫이 이미 소환되어 실행 중입니다! 🐾\n\n만약 화면에 펫이 보이지 않는다면, 윈도우 작업 표시줄 우측 하단의 트레이 영역(숨겨진 아이콘)에서 검은 고양이 아이콘을 우클릭하여 설정 창을 열거나 앱을 다시 껏다 켜 보시기 바랍니다.'
+  );
   app.quit();
   process.exit(0);
 }

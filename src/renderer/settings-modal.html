@@ -37,16 +37,8 @@
       flex-direction: column;
       animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
       color: #E2E8F0;
-      -webkit-app-region: drag; /* Draggable window space */
+      -webkit-app-region: no-drag; /* Prevent button capture lockouts */
       overflow: hidden;
-    }
-
-    /* Prevent dragging on interactive fields */
-    .close-modal, 
-    .sidebar, 
-    .tab-content, 
-    .save-btn {
-      -webkit-app-region: no-drag;
     }
 
     @keyframes popIn {
@@ -61,6 +53,7 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       padding: 14px 20px;
       background: rgba(0, 0, 0, 0.2);
+      -webkit-app-region: drag; /* Draggable handle */
     }
 
     .modal-header h3 {
@@ -70,6 +63,7 @@
       background: linear-gradient(135deg, #FF7E5F, #FEB47B, #8B5CF6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      user-select: none;
     }
 
     .close-modal {
@@ -79,6 +73,7 @@
       font-weight: bold;
       line-height: 1;
       transition: color 0.2s ease, transform 0.2s ease;
+      -webkit-app-region: no-drag; /* Clickable */
     }
 
     .close-modal:hover {
@@ -131,9 +126,10 @@
     }
 
     .tab-btn.active {
-      background: linear-gradient(135deg, rgba(255, 126, 95, 0.15), rgba(139, 92, 246, 0.15));
+      background: linear-gradient(135deg, rgba(255, 126, 95, 0.18), rgba(139, 92, 246, 0.18));
       color: #FF7E5F;
-      border-left: 2px solid #FF7E5F;
+      border-left: 3px solid #FF7E5F;
+      box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.05);
     }
 
     /* Content Area */
@@ -305,8 +301,10 @@
     }
 
     .pet-card.selected {
-      border-color: #FF7E5F;
-      background: linear-gradient(135deg, rgba(255, 126, 95, 0.12), rgba(139, 92, 246, 0.12));
+      border-color: #8B5CF6;
+      background: linear-gradient(135deg, rgba(255, 126, 95, 0.15), rgba(139, 92, 246, 0.15));
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.45),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
 
     .card-preview svg {
@@ -346,6 +344,7 @@
       background: linear-gradient(135deg, #FF7E5F, #8B5CF6);
       color: white;
       border-color: transparent;
+      box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
     }
 
     .toggle-list {
@@ -897,7 +896,11 @@
             updateMsg.textContent = '현재 최신 버전을 사용 중입니다.';
           }
         } else {
-          updateMsg.textContent = '업데이트 확인 실패: ' + res.error;
+          if (res.error && (res.error.includes('404') || res.error.includes('authentication token'))) {
+            updateMsg.innerHTML = '<span style="color: #f87171; font-weight: bold;">업데이트 서버 정보 확인 대기 중 ⚠️</span><br>깃허브 저장소 Releases 탭에 첫 번째 배포 버전(v1.0.0 등)이 업로드되어 있지 않거나 프라이빗 저장소인 경우 발생할 수 있습니다. 제작자에게 문의바랍니다.';
+          } else {
+            updateMsg.textContent = '업데이트 확인 실패: ' + res.error;
+          }
         }
       });
 
