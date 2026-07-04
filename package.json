@@ -29,6 +29,13 @@
     "appId": "com.kuro.desktop-pet",
     "productName": "Kuro Desktop Pet",
     "npmRebuild": false,
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "config/**/*",
+      "package.json",
+      "!assets/**/*.ps1"
+    ],
     "directories": {
       "output": "dist"
     },

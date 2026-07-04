@@ -172,6 +172,23 @@ class PetRenderer {
     window.api.onAgentEvent((data) => {
       this.stateMachine.resetInactivity();
       
+      // Clear previous agent inactivity timer
+      if (this.agentSessionTimeout) {
+        clearTimeout(this.agentSessionTimeout);
+        this.agentSessionTimeout = null;
+      }
+
+      // Set new agent inactivity timer to reset session state after 15 seconds of silence
+      this.agentSessionTimeout = setTimeout(() => {
+        this.isAgentSessionActive = false;
+        if (
+          this.stateMachine.currentStateName === 'thinking' ||
+          this.stateMachine.currentStateName === 'typing'
+        ) {
+          this.stateMachine.setState('idle');
+        }
+      }, 15000);
+
       if (data.type === 'thinking') {
         this.isAgentSessionActive = true;
         if (this.stateMachine.currentStateName !== 'thinking') {
