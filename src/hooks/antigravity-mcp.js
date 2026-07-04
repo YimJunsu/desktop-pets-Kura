@@ -31,8 +31,21 @@ function registerAntigravityMcp() {
     config.mcpServers = {};
   }
 
-  // Register kuro-pet bridge dynamically
-  const bridgePath = path.resolve(__dirname, 'mcp-bridge.js');
+  // Copy mcp-bridge.js to external path to avoid ASAR loading issues in Electron production
+  const externalDir = path.join(os.homedir(), '.kuro-pet');
+  if (!fs.existsSync(externalDir)) {
+    try {
+      fs.mkdirSync(externalDir, { recursive: true });
+    } catch (e) {}
+  }
+  const bridgePath = path.join(externalDir, 'mcp-bridge.js');
+  try {
+    const content = fs.readFileSync(path.resolve(__dirname, 'mcp-bridge.js'), 'utf8');
+    fs.writeFileSync(bridgePath, content, 'utf8');
+  } catch (err) {
+    console.error('Failed to copy mcp-bridge.js:', err.message);
+  }
+
   config.mcpServers['kuro-pet'] = {
     command: 'node',
     args: [bridgePath]

@@ -174,10 +174,26 @@ class PetRenderer {
       
       if (data.type === 'thinking') {
         this.isAgentSessionActive = true;
-        this.stateMachine.setState('thinking');
+        if (this.stateMachine.currentStateName !== 'thinking') {
+          this.stateMachine.setState('thinking');
+        } else {
+          const thinkingStateInstance = this.stateMachine.states.thinking;
+          if (thinkingStateInstance && thinkingStateInstance.timeout) {
+            clearTimeout(thinkingStateInstance.timeout);
+            thinkingStateInstance.enter();
+          }
+        }
       } else if (data.type === 'writing') {
         this.isAgentSessionActive = true;
-        this.stateMachine.setState('typing');
+        if (this.stateMachine.currentStateName !== 'typing') {
+          this.stateMachine.setState('typing');
+        } else {
+          const typingStateInstance = this.stateMachine.states.typing;
+          if (typingStateInstance && typingStateInstance.timeout) {
+            clearTimeout(typingStateInstance.timeout);
+            typingStateInstance.enter();
+          }
+        }
       } else if (data.type === 'success') {
         this.isAgentSessionActive = false;
         this.stateMachine.setState('happy');

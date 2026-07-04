@@ -229,7 +229,19 @@ class TypingState extends BaseState {
   }
 }
 
-class ThinkingState extends BaseState {}
+class ThinkingState extends BaseState {
+  enter() {
+    // Automatically return to idle after 8 seconds of inactivity to prevent getting stuck
+    this.timeout = setTimeout(() => {
+      if (this.machine.currentStateName === 'thinking') {
+        this.machine.setState('idle');
+      }
+    }, 8000);
+  }
+  exit() {
+    if (this.timeout) clearTimeout(this.timeout);
+  }
+}
 
 class HappyState extends BaseState {
   enter() {

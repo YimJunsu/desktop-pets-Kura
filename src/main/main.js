@@ -631,6 +631,31 @@ app.whenReady().then(async () => {
     // 2. Read settings from database
     settingsData = await getSettings();
     console.log('SQLite local database initialized successfully at:', dbPath);
+
+    // 3. Proactively correct registered MCP paths to external directory to bypass ASAR limitations
+    try {
+      const { registerClaudeDesktopHooks } = require('./tray').registerClaudeDesktopHooks ? { registerClaudeDesktopHooks: () => {} } : require('../hooks/claude-desktop');
+      const { registerAntigravityMcp } = require('../hooks/antigravity-mcp');
+      
+      const appData = process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming');
+      const desktopConfigPath = path.join(appData, 'Claude', 'claude_desktop_config.json');
+      if (fs.existsSync(desktopConfigPath)) {
+        const content = JSON.parse(fs.readFileSync(desktopConfigPath, 'utf8'));
+        if (content.mcpServers && content.mcpServers['kuro-pet']) {
+          registerClaudeDesktopHooks();
+        }
+      }
+
+      const antigravityConfigPath = path.join(os.homedir(), '.gemini', 'config', 'mcp_config.json');
+      if (fs.existsSync(antigravityConfigPath)) {
+        const content = JSON.parse(fs.readFileSync(antigravityConfigPath, 'utf8'));
+        if (content.mcpServers && content.mcpServers['kuro-pet']) {
+          registerAntigravityMcp();
+        }
+      }
+    } catch (e) {
+      console.error('Failed to auto-update MCP paths:', e);
+    }
   } catch (err) {
     console.error('Failed to initialize local SQLite settings database:', err);
   }

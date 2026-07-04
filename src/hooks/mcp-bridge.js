@@ -61,6 +61,7 @@ rl.on('line', (line) => {
       sendPetEvent('thinking');
     } 
     else if (request.method === 'tools/list') {
+      sendPetEvent('thinking');
       // Provide a mock tool to update pet state manually if desired
       const response = {
         jsonrpc: '2.0',
