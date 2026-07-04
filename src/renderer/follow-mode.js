@@ -32,8 +32,9 @@ class FollowMode {
         this.cursorY = point.y;
         
         // If follow mode is enabled and pet is not grabbed, trigger follow behavior
+        const isFollow = this.renderer.settings.followMode === true || this.renderer.settings.followMode === 'true';
         if (
-          this.renderer.settings.followMode && 
+          isFollow && 
           this.renderer.stateMachine.currentStateName !== 'grabbed' &&
           this.renderer.stateMachine.currentStateName !== 'sleeping'
         ) {

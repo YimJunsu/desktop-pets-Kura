@@ -41,6 +41,14 @@ contextBridge.exposeInMainWorld('api', {
   loadSVG: (relativePath) => ipcRenderer.invoke('load-svg', relativePath),
   openSettings: () => ipcRenderer.invoke('open-settings-window'),
   closeSettings: () => ipcRenderer.invoke('close-settings-window'),
+  hidePet: () => ipcRenderer.invoke('hide-pet'),
+  showPet: () => ipcRenderer.invoke('show-pet'),
+  isPetVisible: () => ipcRenderer.invoke('is-pet-visible'),
+  onPetVisibilityChanged: (callback) => {
+    const listener = (event, visible) => callback(visible);
+    ipcRenderer.on('pet-visibility-changed', listener);
+    return () => ipcRenderer.removeListener('pet-visibility-changed', listener);
+  },
   onSettingsUpdated: (callback) => {
     const listener = (event, data) => callback(data);
     ipcRenderer.on('settings-updated', listener);
@@ -76,6 +84,7 @@ contextBridge.exposeInMainWorld('api', {
   // Agent Integrations
   registerClaudeCode: () => ipcRenderer.invoke('register-claude-code'),
   registerClaudeDesktop: () => ipcRenderer.invoke('register-claude-desktop'),
+  registerAntigravityMcp: () => ipcRenderer.invoke('register-antigravity-mcp'),
   checkIntegrationStatus: () => ipcRenderer.invoke('check-integration-status'),
   openExternal: (url) => ipcRenderer.invoke('open-external', url),
   quitApp: () => ipcRenderer.invoke('quit-app'),

@@ -75,12 +75,16 @@ class ChatBubble {
   show() {
     this.isVisible = true;
 
-    // Dynamic height spacing depending on pet size setting (XS, S, M, L)
+    // Dynamic height spacing depending on pet size setting (XS, S, M, L) and elevated pet container
     const petSize = this.renderer.settings.size || 'M';
-    let bottomOffset = 218; // Default M
-    if (petSize === 'XS') bottomOffset = 122;
-    else if (petSize === 'S') bottomOffset = 154;
-    else if (petSize === 'L') bottomOffset = 282;
+    let bottomOffset = 80 + 192 + 36; // Default M: pet bottom (80) + pet size (192) + gap (36)
+    if (petSize === 'XS') {
+      bottomOffset = 50 + 96 + 24; // 170
+    } else if (petSize === 'S') {
+      bottomOffset = 65 + 128 + 30; // 223
+    } else if (petSize === 'L') {
+      bottomOffset = 100 + 256 + 40; // 396
+    }
     this.container.style.bottom = `${bottomOffset}px`;
 
     this.container.classList.remove('hidden');
@@ -193,7 +197,8 @@ class ChatBubble {
                              currentModel === 'oyajichi' ? 'OyaJiChi' :
                              currentModel === 'blackyang' ? 'BlackYang' :
                              currentModel === 'cheeseyang' ? 'CheeseYang' :
-                             currentModel === 'raccoon' ? 'Raccoon' : 'Clawd';
+                             currentModel === 'raccoon' ? 'Raccoon' :
+                             currentModel === 'momongga' ? 'Momongga' : 'Clawd';
     msg.textContent = `${modelDisplayName}: `;
     this.messagesDiv.appendChild(msg);
     
@@ -210,7 +215,7 @@ class ChatBubble {
   }
 
   async callGeminiAPI(prompt, apiKey) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     
     const currentModel = this.renderer.settings.model || 'clawd';
     let systemText = '';
@@ -224,6 +229,8 @@ class ChatBubble {
       systemText = "You are CheeseYang, a cute orange tabby cat pet. You live on the user's desktop, helping them code. Answer shortly and cutely (under 2 sentences) in Korean like a cat (e.g. ending sentences with '~냥'), using emojis like 🐈, 🐾, 🧀, 💖!";
     } else if (currentModel === 'raccoon') {
       systemText = "You are Raccoon, a mischievous and playful raccoon pet. You live on the user's desktop, helping them code. Answer shortly and cutely (under 2 sentences) in Korean like a cheeky raccoon (e.g. occasionally talking about washing things, hiding items, or typing with tiny paws), using emojis like 🦝, 🐾, 🧹, 🍪!";
+    } else if (currentModel === 'momongga') {
+      systemText = "You are Momongga, a cute and slightly spoiled flying squirrel pet from Chiikawa. You live on the user's desktop, helping them code. Answer shortly and cutely (under 2 sentences) in Korean like Momonga (e.g., bragging about how cute you are, wanting attention/praise, or using sounds like '웅야', '치야'), using emojis like 🐿️, 🩵, ✨, 🍑!";
     } else {
       systemText = "You are Clawd, a cute orange coral octopus pet. You live on the user's desktop, floating and helping them code. Answer shortly and cutely (under 2 sentences) in Korean, occasionally using adorable emojis like 🐙, 💻, ✨, 💖!";
     }

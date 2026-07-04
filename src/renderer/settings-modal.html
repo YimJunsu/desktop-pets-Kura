@@ -22,27 +22,23 @@
 
     /* Glassmorphism Dark Mode Container */
     .modal-content {
-      background: rgba(20, 18, 28, 0.88);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border-radius: 24px;
+      background: #0F172A; /* Solid slate-900 for simple modern look */
+      border-radius: 16px; /* sharper modern radius */
       width: 400px;
       height: 480px;
       padding: 0;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), 
-                  inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                  inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+      border: 1px solid #1E293B; /* slate-800 border */
       display: flex;
       flex-direction: column;
-      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
-      color: #E2E8F0;
-      -webkit-app-region: no-drag; /* Prevent button capture lockouts */
+      animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      color: #F1F5F9;
+      -webkit-app-region: no-drag;
       overflow: hidden;
     }
 
     @keyframes popIn {
-      from { transform: scale(0.9); opacity: 0; }
+      from { transform: scale(0.96); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
 
@@ -50,35 +46,33 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 14px 20px;
-      background: rgba(0, 0, 0, 0.2);
-      -webkit-app-region: drag; /* Draggable handle */
+      border-bottom: 1px solid #1E293B;
+      padding: 12px 18px;
+      background: #0B0F19;
+      -webkit-app-region: drag;
     }
 
     .modal-header h3 {
       margin: 0;
-      font-size: 15px;
-      font-weight: bold;
-      background: linear-gradient(135deg, #FF7E5F, #FEB47B, #8B5CF6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 13px;
+      font-weight: 600;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       user-select: none;
     }
 
     .close-modal {
       cursor: pointer;
-      font-size: 20px;
-      color: #94A3B8;
-      font-weight: bold;
-      line-height: 1;
-      transition: color 0.2s ease, transform 0.2s ease;
-      -webkit-app-region: no-drag; /* Clickable */
+      font-size: 16px;
+      color: #64748B;
+      font-weight: 500;
+      transition: color 0.15s ease;
+      -webkit-app-region: no-drag;
     }
 
     .close-modal:hover {
-      color: #FF7E5F;
-      transform: scale(1.1);
+      color: #F1F5F9;
     }
 
     /* Sidebar Layout */
@@ -91,8 +85,8 @@
 
     .sidebar {
       width: 110px;
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.01);
+      border-right: 1px solid #1E293B;
+      background: #0B0F19;
       display: flex;
       flex-direction: column;
       gap: 4px;
@@ -102,34 +96,33 @@
     .tab-btn {
       background: transparent;
       border: none;
-      color: #94A3B8;
-      padding: 10px 8px;
-      border-radius: 8px;
+      color: #64748B;
+      padding: 8px 10px;
+      border-radius: 6px;
       text-align: left;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
     .tab-btn:hover {
-      background: rgba(255, 255, 255, 0.04);
-      color: #E2E8F0;
+      background: #1E293B;
+      color: #F1F5F9;
     }
 
     .tab-btn.exit-btn:hover {
-      background: rgba(239, 68, 68, 0.15) !important;
+      background: rgba(239, 68, 68, 0.12) !important;
       color: #fca5a5 !important;
     }
 
     .tab-btn.active {
-      background: linear-gradient(135deg, rgba(255, 126, 95, 0.18), rgba(139, 92, 246, 0.18));
-      color: #FF7E5F;
-      border-left: 3px solid #FF7E5F;
-      box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.05);
+      background: #1E293B;
+      color: #6366F1;
+      border-left: 2px solid #6366F1;
     }
 
     /* Content Area */
@@ -150,11 +143,11 @@
     }
 
     .section-title {
-      font-size: 10px;
-      font-weight: bold;
-      color: #A78BFA;
+      font-size: 9px;
+      font-weight: 600;
+      color: #64748B;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.5px;
       margin: 0 0 6px 0;
     }
 
@@ -162,43 +155,43 @@
     .input-field {
       width: 100%;
       box-sizing: border-box;
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      padding: 8px 12px;
-      color: #E2E8F0;
+      background: #090D16;
+      border: 1px solid #1E293B;
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: #F1F5F9;
       font-size: 11px;
-      transition: border-color 0.2s ease;
+      transition: border-color 0.15s ease;
     }
 
     .input-field:focus {
       outline: none;
-      border-color: #FF7E5F;
+      border-color: #6366F1;
     }
 
     /* SQLite Info card */
     .info-card {
-      background: rgba(139, 92, 246, 0.05);
-      border: 1px solid rgba(139, 92, 246, 0.2);
-      border-radius: 12px;
-      padding: 10px 12px;
+      background: #0B0F19;
+      border: 1px solid #1E293B;
+      border-radius: 8px;
+      padding: 8px 10px;
       font-size: 10px;
       line-height: 1.4;
-      color: #CBD5E1;
+      color: #94A3B8;
     }
 
     .db-path-container {
       margin-top: 8px;
       margin-bottom: 12px;
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 10px;
-      padding: 8px 12px;
+      background: #090D16;
+      border: 1px solid #1E293B;
+      border-radius: 6px;
+      padding: 6px 10px;
     }
 
     .db-path-label {
       font-size: 9px;
-      color: #94A3B8;
+      color: #64748B;
       font-weight: bold;
       display: block;
       margin-bottom: 4px;
@@ -214,15 +207,15 @@
 
     /* Integration Action buttons */
     .btn-integration {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      padding: 8px 12px;
-      color: #E2E8F0;
+      background: #0B0F19;
+      border: 1px solid #1E293B;
+      border-radius: 8px;
+      padding: 6px 10px;
+      color: #F1F5F9;
       font-size: 11px;
-      font-weight: bold;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -231,8 +224,8 @@
     }
 
     .btn-integration:hover {
-      background: rgba(255, 126, 95, 0.1);
-      border-color: rgba(255, 126, 95, 0.4);
+      background: #1E293B;
+      border-color: #6366F1;
     }
 
     .badge-status {
@@ -256,21 +249,21 @@
 
     .guide-text {
       font-size: 9px;
-      color: #94A3B8;
+      color: #64748B;
       line-height: 1.35;
       margin: 0;
     }
 
     .code-box {
       font-family: monospace;
-      background: rgba(0, 0, 0, 0.35);
+      background: #090D16;
       padding: 6px;
       border-radius: 6px;
       font-size: 8.5px;
       color: #e5e7eb;
       margin-top: 4px;
       word-break: break-all;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid #1E293B;
       user-select: text;
     }
 
@@ -282,13 +275,13 @@
     }
 
     .pet-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 10px;
+      background: #0B0F19;
+      border: 1px solid #1E293B;
+      border-radius: 8px;
       padding: 6px 4px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.15s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -296,15 +289,14 @@
     }
 
     .pet-card:hover {
-      border-color: rgba(255, 126, 95, 0.3);
-      background: rgba(255, 255, 255, 0.05);
+      border-color: #334155;
+      background: #1E293B;
     }
 
     .pet-card.selected {
-      border-color: #8B5CF6;
-      background: linear-gradient(135deg, rgba(255, 126, 95, 0.15), rgba(139, 92, 246, 0.15));
-      box-shadow: 0 0 10px rgba(139, 92, 246, 0.45),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border-color: #6366F1;
+      background: rgba(99, 102, 241, 0.08);
+      box-shadow: none;
     }
 
     .card-preview svg {
@@ -325,26 +317,26 @@
 
     .size-btn {
       flex: 1;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 8px;
-      padding: 6px 0;
+      background: #0B0F19;
+      border: 1px solid #1E293B;
+      border-radius: 6px;
+      padding: 5px 0;
       font-size: 10px;
-      font-weight: bold;
-      color: #94A3B8;
+      font-weight: 500;
+      color: #64748B;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
     }
 
     .size-btn:hover {
-      border-color: #FF7E5F;
+      border-color: #334155;
     }
 
     .size-btn.selected {
-      background: linear-gradient(135deg, #FF7E5F, #8B5CF6);
+      background: #6366F1;
       color: white;
       border-color: transparent;
-      box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+      box-shadow: none;
     }
 
     .toggle-list {
@@ -357,12 +349,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 10px;
-      padding: 8px 12px;
+      background: #0B0F19;
+      border: 1px solid #1E293B;
+      border-radius: 8px;
+      padding: 6px 10px;
       font-size: 10px;
-      color: #E2E8F0;
+      color: #F1F5F9;
     }
 
     .switch {
@@ -382,8 +374,8 @@
       position: absolute;
       cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(255, 255, 255, 0.15);
-      transition: .3s ease;
+      background-color: #334155;
+      transition: .2s ease;
       border-radius: 18px;
     }
 
@@ -395,12 +387,12 @@
       left: 3px;
       bottom: 3px;
       background-color: white;
-      transition: .3s ease;
+      transition: .2s ease;
       border-radius: 50%;
     }
 
     input:checked + .slider {
-      background: linear-gradient(135deg, #FF7E5F, #8B5CF6);
+      background: #6366F1;
     }
 
     input:checked + .slider:before {
@@ -410,30 +402,28 @@
     /* Modal Footer */
     .modal-footer {
       display: flex;
-      padding: 12px 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(0, 0, 0, 0.2);
+      padding: 10px 18px;
+      border-top: 1px solid #1E293B;
+      background: #0B0F19;
     }
 
     .save-btn {
       width: 100%;
-      background: linear-gradient(135deg, #8B5CF6, #FF7E5F);
+      background: #6366F1;
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       padding: 8px 0;
-      font-size: 12px;
-      font-weight: bold;
+      font-size: 11px;
+      font-weight: 600;
       cursor: pointer;
       text-align: center;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35);
+      transition: all 0.15s ease;
+      box-shadow: none;
     }
 
     .save-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
-      filter: brightness(1.1);
+      background: #4F46E5;
     }
     .hidden {
       display: none !important;
@@ -458,8 +448,12 @@
           <span id="updater-badge" class="red-dot hidden" style="position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; background-color: #ef4444; border-radius: 50%;"></span>
         </button>
         
+        <!-- Hide Pet Button -->
+        <button class="tab-btn hide-btn" id="hide-pet-btn" style="margin-top: auto; color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2); background: rgba(251, 191, 36, 0.05);">
+          🙈 펫 숨기기
+        </button>
         <!-- Exit Pet Button -->
-        <button class="tab-btn exit-btn" id="exit-pet-btn" style="margin-top: auto; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05);">
+        <button class="tab-btn exit-btn" id="exit-pet-btn" style="margin-top: 8px; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05);">
           🛑 펫 종료하기
         </button>
       </div>
@@ -499,25 +493,6 @@
                   </svg>
                 </div>
                 <div class="card-name">BlackYang</div>
-              </div>
-
-
-              <!-- OyaJiChi -->
-              <div class="pet-card" data-model="oyajichi">
-                <div class="card-preview">
-                  <svg viewBox="0 0 32 32">
-                    <g transform="translate(4,4)">
-                      <ellipse cx="12" cy="12" rx="9" ry="8" fill="#FCE0C5" stroke="#1E1B18" stroke-width="1.0" />
-                      <path d="M 6.2 15.2 Q 8.5 13.6 12 13.6 Q 15.5 13.6 17.8 15.2 Q 15.5 14.2 12 14.2 Q 8.5 14.2 6.2 15.2 Z" fill="#1E1B18" stroke="#1E1B18" stroke-width="0.5" />
-                      <circle cx="7.8" cy="9.5" r="0.75" fill="#0E2F44" />
-                      <circle cx="16.2" cy="9.5" r="0.75" fill="#0E2F44" />
-                      <path d="M 6.5 8 L 9 8" stroke="#1E1B18" stroke-width="1.0" stroke-linecap="round" />
-                      <path d="M 15 8 L 17.5 8" stroke="#1E1B18" stroke-width="1.0" stroke-linecap="round" />
-                      <path d="M 12 4 Q 13 2 12 1 T 13 -1" fill="none" stroke="#1E1B18" stroke-width="1.0" stroke-linecap="round" />
-                    </g>
-                  </svg>
-                </div>
-                <div class="card-name">OyaJiChi</div>
               </div>
 
               <!-- CheeseYang -->
@@ -575,6 +550,55 @@
                   </svg>
                 </div>
                 <div class="card-name">Raccoon</div>
+              </div>
+
+              <!-- OyaJiChi -->
+              <div class="pet-card" data-model="oyajichi">
+                <div class="card-preview">
+                  <svg viewBox="0 0 32 32">
+                    <g transform="translate(4,4)">
+                      <ellipse cx="12" cy="12" rx="9" ry="8" fill="#FCE0C5" stroke="#1E1B18" stroke-width="1.0" />
+                      <path d="M 6.2 15.2 Q 8.5 13.6 12 13.6 Q 15.5 13.6 17.8 15.2 Q 15.5 14.2 12 14.2 Q 8.5 14.2 6.2 15.2 Z" fill="#1E1B18" stroke="#1E1B18" stroke-width="0.5" />
+                      <circle cx="7.8" cy="9.5" r="0.75" fill="#0E2F44" />
+                      <circle cx="16.2" cy="9.5" r="0.75" fill="#0E2F44" />
+                      <path d="M 6.5 8 L 9 8" stroke="#1E1B18" stroke-width="1.0" stroke-linecap="round" />
+                      <path d="M 15 8 L 17.5 8" stroke="#1E1B18" stroke-width="1.0" stroke-linecap="round" />
+                      <path d="M 12 4 Q 13 2 12 1 T 13 -1" fill="none" stroke="#1E1B18" stroke-width="1.0" stroke-linecap="round" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="card-name">OyaJiChi</div>
+              </div>
+
+              <!-- Momongga -->
+              <div class="pet-card" data-model="momongga">
+                <div class="card-preview">
+                  <svg viewBox="0 0 32 32">
+                    <g transform="translate(1.5,4)">
+                      <!-- Tail -->
+                      <path d="M 18 21 C 24 22 29 19 28 12 C 27.5 9 29.5 7 28 6 C 26.5 5 25.5 6 24.5 5 C 23.5 4 22 5 21 6.5 C 19 8.5 17.5 13.5 18 21" fill="#C6EBFF" stroke="#1E1B18" stroke-width="0.8" />
+                      <!-- Ears -->
+                      <circle cx="7.5" cy="7.5" r="3.5" fill="#ffffff" stroke="#1E1B18" stroke-width="0.8" />
+                      <circle cx="7.5" cy="7.5" r="2.0" fill="#C6EBFF" />
+                      <circle cx="22.5" cy="7.5" r="3.5" fill="#ffffff" stroke="#1E1B18" stroke-width="0.8" />
+                      <circle cx="22.5" cy="7.5" r="2.0" fill="#C6EBFF" />
+                      <!-- Body -->
+                      <ellipse cx="15" cy="20" rx="7.5" ry="5.5" fill="#ffffff" stroke="#1E1B18" stroke-width="0.8" />
+                      <!-- Head -->
+                      <ellipse cx="15" cy="14" rx="9" ry="8" fill="#ffffff" stroke="#1E1B18" stroke-width="0.8" />
+                      <!-- Cheeks -->
+                      <ellipse cx="9.5" cy="16.5" rx="1.8" ry="1.0" fill="#FFA3B1" />
+                      <ellipse cx="20.5" cy="16.5" rx="1.8" ry="1.0" fill="#FFA3B1" />
+                      <!-- Eyes -->
+                      <circle cx="11.5" cy="13.5" r="2.1" fill="#1E1B18" />
+                      <circle cx="18.5" cy="13.5" r="2.1" fill="#1E1B18" />
+                      <!-- Nose & Mouth -->
+                      <ellipse cx="15" cy="15.2" rx="0.7" ry="0.5" fill="#C6EBFF" stroke="#1E1B18" stroke-width="0.5" />
+                      <path d="M 14.2 16.2 Q 15.0 16.9 15.8 16.2" fill="none" stroke="#1E1B18" stroke-width="0.8" stroke-linecap="round" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="card-name">Momongga</div>
               </div>
             </div>
           </div>
@@ -659,12 +683,22 @@
             </p>
           </div>
 
-          <!-- Antigravity / Codex -->
+          <!-- Antigravity MCP -->
           <div>
-            <div class="section-title">Antigravity / Codex / 기타 툴</div>
+            <button class="btn-integration" id="btn-setup-antigravity-mcp">
+              <span>Antigravity CLI/IDE 연동</span>
+              <span class="badge-status status-inactive" id="status-antigravity-mcp">감지 중...</span>
+            </button>
+            <p class="guide-text" style="margin-top:4px;">
+              클릭 시 Antigravity(Gemini)의 MCP 설정에 펫 전용 Stdio 브릿지 구성을 자동으로 추가합니다.
+            </p>
+          </div>
+
+          <!-- Codex / Webhook / 기타 툴 -->
+          <div>
+            <div class="section-title">Codex / Webhook / 기타 툴</div>
             <p class="guide-text">
-              <strong>Antigravity:</strong> 페어 프로그래밍 세션 시작 시 자동으로 연동되어 작동합니다. (설정 불필요)<br>
-              <strong>Codex / 기타 IDE:</strong> 아래 Webhook API curl 명령어를 IDE 빌드/명령 훅에 등록하면 펫의 상태가 동기화됩니다:
+              아래 Webhook API curl 명령어를 IDE 빌드/명령 훅에 등록하면 펫의 상태가 동기화됩니다:
             </p>
             <div class="code-box">
               curl -s -X POST -H "Content-Type: application/json" -d "{\"event\":\"thinking\"}" http://127.0.0.1:18900/event
@@ -727,8 +761,10 @@
       
       const btnSetupClaudeCode = document.getElementById('btn-setup-claude-code');
       const btnSetupClaudeDesktop = document.getElementById('btn-setup-claude-desktop');
+      const btnSetupAntigravityMcp = document.getElementById('btn-setup-antigravity-mcp');
       const statusClaudeCode = document.getElementById('status-claude-code');
       const statusClaudeDesktop = document.getElementById('status-claude-desktop');
+      const statusAntigravityMcp = document.getElementById('status-antigravity-mcp');
       const sqliteDbPath = document.getElementById('sqlite-db-path');
 
       // 1. Tab switching logic
@@ -821,6 +857,15 @@
             statusClaudeDesktop.textContent = '미연동 🔴';
             statusClaudeDesktop.className = 'badge-status status-inactive';
           }
+
+          // Update Antigravity MCP Badge
+          if (status.antigravityMcp) {
+            statusAntigravityMcp.textContent = '연동됨 🟢';
+            statusAntigravityMcp.className = 'badge-status status-active';
+          } else {
+            statusAntigravityMcp.textContent = '미연동 🔴';
+            statusAntigravityMcp.className = 'badge-status status-inactive';
+          }
         } catch (e) {
           console.error('Failed to get integration status:', e);
         }
@@ -845,6 +890,17 @@
         const res = await window.api.registerClaudeDesktop();
         if (res.success) {
           alert('Claude Desktop MCP 연동이 완료되었습니다! 앱을 재시작해 주세요. 🐾✨');
+        } else {
+          alert('연동 중 오류가 발생했습니다: ' + res.error);
+        }
+        await updateIntegrationStatus();
+      });
+
+      // Trigger Antigravity MCP config write
+      btnSetupAntigravityMcp.addEventListener('click', async () => {
+        const res = await window.api.registerAntigravityMcp();
+        if (res.success) {
+          alert('Antigravity MCP 연동이 완료되었습니다! 🤖✨');
         } else {
           alert('연동 중 오류가 발생했습니다: ' + res.error);
         }
@@ -951,6 +1007,47 @@
       const closeWindow = () => window.api.closeSettings();
       if (closeBtn) closeBtn.addEventListener('click', closeWindow);
       if (headerClose) headerClose.addEventListener('click', closeWindow);
+
+      // Hide / Summon Pet Handler
+      const hidePetBtn = document.getElementById('hide-pet-btn');
+      
+      function updateHideBtnUI(visible) {
+        if (!hidePetBtn) return;
+        if (visible) {
+          hidePetBtn.innerHTML = '🙈 펫 숨기기';
+          hidePetBtn.style.color = '#fbbf24';
+          hidePetBtn.style.borderColor = 'rgba(251, 191, 36, 0.2)';
+          hidePetBtn.style.background = 'rgba(251, 191, 36, 0.05)';
+        } else {
+          hidePetBtn.innerHTML = '👀 펫 소환하기';
+          hidePetBtn.style.color = '#34d399';
+          hidePetBtn.style.borderColor = 'rgba(52, 211, 153, 0.2)';
+          hidePetBtn.style.background = 'rgba(52, 211, 153, 0.05)';
+        }
+      }
+
+      if (hidePetBtn) {
+        // Load initial state
+        window.api.isPetVisible().then(updateHideBtnUI);
+
+        hidePetBtn.addEventListener('click', async () => {
+          const visible = await window.api.isPetVisible();
+          if (visible) {
+            await window.api.hidePet();
+            updateHideBtnUI(false);
+          } else {
+            await window.api.showPet();
+            updateHideBtnUI(true);
+          }
+        });
+      }
+
+      // Sync UI if changed externally (e.g. from system tray menu)
+      if (window.api.onPetVisibilityChanged) {
+        window.api.onPetVisibilityChanged((visible) => {
+          updateHideBtnUI(visible);
+        });
+      }
 
       // Exit App Handler
       const exitPetBtn = document.getElementById('exit-pet-btn');

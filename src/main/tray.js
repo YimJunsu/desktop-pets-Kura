@@ -3,9 +3,8 @@ const path = require('path');
 const { updateSetting } = require('./db');
 
 let tray = null;
-let settingsWindow = null;
 
-function createTray(mainWindow, settingsData) {
+function createTray(mainWindow, settingsData, openSettings) {
   // Load tray icon
   const iconPath = path.join(__dirname, '../../assets/tray-icon.png');
   tray = new Tray(iconPath);
@@ -85,7 +84,7 @@ function createTray(mainWindow, settingsData) {
     { type: 'separator' },
     {
       label: 'Settings (설정)...',
-      click: () => openSettingsWindow(mainWindow)
+      click: () => openSettings()
     },
     { type: 'separator' },
     {
@@ -98,6 +97,25 @@ function createTray(mainWindow, settingsData) {
   ]);
 
   tray.setContextMenu(contextMenu);
+
+  // Sync tray items when window show/hide state is changed externally
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.on('show', () => {
+      const showItem = contextMenu.getMenuItemById('show-pet');
+      const hideItem = contextMenu.getMenuItemById('hide-pet');
+      if (showItem) showItem.visible = false;
+      if (hideItem) hideItem.visible = true;
+      tray.setContextMenu(contextMenu);
+    });
+
+    mainWindow.on('hide', () => {
+      const showItem = contextMenu.getMenuItemById('show-pet');
+      const hideItem = contextMenu.getMenuItemById('hide-pet');
+      if (showItem) showItem.visible = true;
+      if (hideItem) hideItem.visible = false;
+      tray.setContextMenu(contextMenu);
+    });
+  }
   
   // Double-clicking the tray icon can wake up the pet
   tray.on('double-click', () => {
@@ -135,32 +153,6 @@ async function toggleSleep(win, settingsData, active) {
   }
 }
 
-function openSettingsWindow(parentWin) {
-  if (settingsWindow && !settingsWindow.isDestroyed()) {
-    settingsWindow.focus();
-    return;
-  }
 
-  settingsWindow = new BrowserWindow({
-    width: 440,
-    height: 520,
-    transparent: true,
-    frame: false,
-    resizable: false,
-    hasShadow: false,
-    icon: path.join(__dirname, '../../assets/tray-icon.png'),
-    webPreferences: {
-      preload: path.join(__dirname, '../preload.js'),
-      nodeIntegration: false,
-      contextIsolation: true
-    }
-  });
-
-  settingsWindow.loadFile(path.join(__dirname, '../renderer/settings-modal.html'));
-
-  settingsWindow.on('closed', () => {
-    settingsWindow = null;
-  });
-}
 
 module.exports = { createTray };

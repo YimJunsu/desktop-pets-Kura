@@ -62,6 +62,9 @@ class DragHandler {
       this.renderer.stateMachine.setState('grabbed');
       this.renderer.stateMachine.resetInactivity();
       
+      // Apply baseline mochi stretch immediately on click
+      this.applyMochiStretch();
+      
       e.stopPropagation();
     });
 
@@ -225,14 +228,17 @@ class DragHandler {
     const svg = this.container.querySelector('svg');
     if (!svg) return;
     
-    // Stretch factor based on vertical speed (max stretch increased from 1.4 to 1.9)
     const stretchSpeed = Math.abs(this.vy);
-    const scaleY = 1.0 + Math.min(stretchSpeed * 3.5, 0.9);
     
-    // Compress width to conserve volume (max compression increased from 0.2 to 0.4)
-    const scaleX = 1.0 - Math.min(stretchSpeed * 1.8, 0.4);
+    // Baseline stretch: stretched 1.35x even when stationary (stretchSpeed === 0)
+    // Max stretch: 1.35 + 1.05 = 2.4x
+    const scaleY = 1.35 + Math.min(stretchSpeed * 4.0, 1.05);
     
-    // Skew based on horizontal speed (max skew angle increased from 15 to 30 degrees)
+    // Baseline compression: compressed 0.75x width when stationary
+    // Max compression: 0.75 - 0.30 = 0.45x width
+    const scaleX = 0.75 - Math.min(stretchSpeed * 2.0, 0.30);
+    
+    // Skew based on horizontal speed (max skew angle 30 degrees)
     const skewSpeed = this.vx;
     const skewX = Math.max(-30, Math.min(skewSpeed * 80, 30));
     

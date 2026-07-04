@@ -29,7 +29,7 @@ class PetRenderer {
         this.settings = { ...this.settings, ...savedSettings };
         
         // Failsafe fallback for deleted or invalid models
-        const validModels = ['clawd', 'oyajichi', 'blackyang', 'cheeseyang', 'raccoon'];
+        const validModels = ['clawd', 'oyajichi', 'blackyang', 'cheeseyang', 'raccoon', 'momongga'];
         if (!this.settings.model || !validModels.includes(this.settings.model)) {
           this.settings.model = 'blackyang';
         }
@@ -84,12 +84,21 @@ class PetRenderer {
   updatePetSize(sizeStr) {
     const container = document.getElementById('pet-container');
     let pixels = 192;
-    if (sizeStr === 'XS') pixels = 96;
-    else if (sizeStr === 'S') pixels = 128;
-    else if (sizeStr === 'L') pixels = 256;
+    let bottomOffset = 80;
+    if (sizeStr === 'XS') {
+      pixels = 96;
+      bottomOffset = 50;
+    } else if (sizeStr === 'S') {
+      pixels = 128;
+      bottomOffset = 65;
+    } else if (sizeStr === 'L') {
+      pixels = 256;
+      bottomOffset = 100;
+    }
     
     container.style.width = `${pixels}px`;
     container.style.height = `${pixels}px`;
+    container.style.bottom = `${bottomOffset}px`;
   }
 
   setupLocalListeners() {
@@ -228,6 +237,8 @@ class PetRenderer {
         if (!data.value && this.stateMachine.currentStateName === 'following') {
           this.stateMachine.setState('idle');
         }
+      } else if (data.key === 'geminiApiKey') {
+        this.settings.geminiApiKey = data.value;
       }
     });
 

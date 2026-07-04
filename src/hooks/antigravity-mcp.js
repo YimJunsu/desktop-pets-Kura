@@ -2,13 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-function registerClaudeDesktopHooks() {
-  console.log('Registering Claude Desktop MCP hooks...');
+function registerAntigravityMcp() {
+  console.log('Registering Antigravity MCP hooks...');
   
-  // Claude Desktop config file path on Windows
-  const appData = process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming');
-  const configDir = path.join(appData, 'Claude');
-  const configPath = path.join(configDir, 'claude_desktop_config.json');
+  const configDir = path.join(os.homedir(), '.gemini', 'config');
+  const configPath = path.join(configDir, 'mcp_config.json');
 
   if (!fs.existsSync(configDir)) {
     try {
@@ -29,7 +27,6 @@ function registerClaudeDesktopHooks() {
     }
   }
 
-  // Ensure structure
   if (!config.mcpServers) {
     config.mcpServers = {};
   }
@@ -43,17 +40,12 @@ function registerClaudeDesktopHooks() {
 
   try {
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
-    console.log(`Successfully registered MCP server in ${configPath}`);
+    console.log(`Successfully registered Antigravity MCP server in ${configPath}`);
     return true;
   } catch (err) {
-    console.error(`Failed to write Claude Desktop config:`, err.message);
+    console.error(`Failed to write Antigravity MCP config:`, err.message);
     return false;
   }
 }
 
-// Execute if run directly
-if (require.main === module) {
-  registerClaudeDesktopHooks();
-}
-
-module.exports = { registerClaudeDesktopHooks };
+module.exports = { registerAntigravityMcp };

@@ -153,16 +153,13 @@ class IdleState extends BaseState {
       this.machine.renderer.eyeTracker.start();
     }
     
-    // Randomly wander around or sit down after some time
+    // Randomly sit down after some time (do not wander automatically to keep pet in place)
     this.wanderTimer = setTimeout(() => {
       if (this.machine.currentStateName !== 'idle') return;
       
-      // 30% chance to sit, 30% to wander, 40% stay idle
       const rand = Math.random();
       if (rand < 0.3) {
         this.machine.setState('sitting');
-      } else if (rand < 0.6 && !this.machine.renderer.settings.followMode) {
-        this.machine.setState('walking');
       }
     }, 15000 + Math.random() * 15000);
   }

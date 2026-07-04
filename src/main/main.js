@@ -19,6 +19,7 @@ app.commandLine.appendSwitch('js-flags', '--expose-gc --max-semi-space-size=1 --
 const { initDatabase, getSettings, updateSetting, dbPath } = require('./db');
 const { registerClaudeHooks } = require('../hooks/claude-code');
 const { registerClaudeDesktopHooks } = require('../hooks/claude-desktop');
+const { registerAntigravityMcp } = require('../hooks/antigravity-mcp');
 
 let isDuplicateInstance = false;
 
@@ -72,25 +73,40 @@ function startCursorPolling(intervalMs) {
 
 function getWindowSize(sizeStr) {
   switch (sizeStr) {
-    case 'XS': return { width: 260, height: 250, petSize: 96 };
-    case 'S': return { width: 290, height: 300, petSize: 128 };
-    case 'L': return { width: 400, height: 460, petSize: 256 };
+    case 'XS': return { width: 300, height: 350, petSize: 96 };
+    case 'S': return { width: 340, height: 430, petSize: 128 };
+    case 'L': return { width: 500, height: 730, petSize: 256 };
     case 'M':
     default:
-      return { width: 320, height: 380, petSize: 192 };
+      return { width: 400, height: 560, petSize: 192 };
   }
 }
 
 function clampToScreen(x, y, width, height) {
   const displays = screen.getAllDisplays();
+  
+  // Determine pet size and offsets inside the window
+  let petSize = 192;
+  if (width === 300) petSize = 96;
+  else if (width === 340) petSize = 128;
+  else if (width === 500) petSize = 256;
+  
+  const petLeftInWindow = (width - petSize) / 2;
+  const petRightInWindow = petLeftInWindow + petSize;
+  const petBottomInWindow = height - 20;
+  const petTopInWindow = petBottomInWindow - petSize;
+
   let isVisible = false;
+  // Check if the pet itself (not the window container) is on any display
   for (const display of displays) {
     const bounds = display.bounds;
+    const petX = x + petLeftInWindow;
+    const petY = y + petTopInWindow;
     const intersects = (
-      x < bounds.x + bounds.width &&
-      x + width > bounds.x &&
-      y < bounds.y + bounds.height &&
-      y + height > bounds.y
+      petX < bounds.x + bounds.width &&
+      petX + petSize > bounds.x &&
+      petY < bounds.y + bounds.height &&
+      petY + petSize > bounds.y
     );
     if (intersects) {
       isVisible = true;
@@ -101,16 +117,23 @@ function clampToScreen(x, y, width, height) {
   if (!isVisible) {
     const primaryDisplay = screen.getPrimaryDisplay();
     const bounds = primaryDisplay.workArea;
-    x = bounds.x + bounds.width - width - 20;
-    y = bounds.y + bounds.height - height - 20;
+    x = bounds.x + bounds.width - petRightInWindow - 20;
+    y = bounds.y + bounds.height - petBottomInWindow - 20;
   } else {
     const nearestDisplay = screen.getDisplayNearestPoint({
       x: Math.round(x + width / 2),
       y: Math.round(y + height / 2)
     });
     const bounds = nearestDisplay.workArea;
-    x = Math.max(bounds.x, Math.min(x, bounds.x + bounds.width - width));
-    y = Math.max(bounds.y, Math.min(y, bounds.y + bounds.height - height));
+    
+    // Clamp so the pet body stays within the display workArea, letting empty window space go offscreen
+    const minX = bounds.x - petLeftInWindow;
+    const maxX = bounds.x + bounds.width - petRightInWindow;
+    const minY = bounds.y - petTopInWindow;
+    const maxY = bounds.y + bounds.height - petBottomInWindow;
+    
+    x = Math.max(minX, Math.min(x, maxX));
+    y = Math.max(minY, Math.min(y, maxY));
   }
   
   return { x: Math.round(x), y: Math.round(y) };
@@ -162,6 +185,38 @@ function createMainWindow() {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+
+  // Prevent minimization (e.g. from Win+D or screen clips) and restore immediately
+  mainWindow.on('minimize', (e) => {
+    e.preventDefault();
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.restore();
+    }
+  });
+
+  // Re-enforce always-on-top state on focus/blur to prevent hiding behind overlays
+  mainWindow.on('blur', () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.setAlwaysOnTop(true, 'screen-saver');
+    }
+  });
+  mainWindow.on('focus', () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.setAlwaysOnTop(true, 'screen-saver');
+    }
+  });
+
+  mainWindow.on('show', () => {
+    if (settingsWindow && !settingsWindow.isDestroyed()) {
+      settingsWindow.webContents.send('pet-visibility-changed', true);
+    }
+  });
+
+  mainWindow.on('hide', () => {
+    if (settingsWindow && !settingsWindow.isDestroyed()) {
+      settingsWindow.webContents.send('pet-visibility-changed', false);
+    }
   });
 
 
@@ -255,15 +310,27 @@ ipcMain.handle('update-settings', async (event, key, value) => {
   return settingsData;
 });
 
+let savePositionTimeout = null;
+
 ipcMain.handle('save-position', async (event, pos) => {
   const webContents = event.sender;
   const win = BrowserWindow.fromWebContents(webContents);
-  if (win && pos && typeof pos.x === 'number' && typeof pos.y === 'number') {
+  if (win && pos && typeof pos.x === 'number' && typeof pos.y === 'number' && !isNaN(pos.x) && !isNaN(pos.y)) {
     const bounds = win.getBounds();
     const clamped = clampToScreen(pos.x, pos.y, bounds.width, bounds.height);
     settingsData.position = clamped;
-    await updateSetting('position', clamped);
     win.setPosition(clamped.x, clamped.y);
+
+    // Debounce database write (500ms delay) to prevent disk I/O bottleneck
+    if (savePositionTimeout) clearTimeout(savePositionTimeout);
+    savePositionTimeout = setTimeout(async () => {
+      try {
+        await updateSetting('position', settingsData.position);
+      } catch (err) {
+        console.error('Failed to save position to DB:', err);
+      }
+    }, 500);
+
     return true;
   }
   return false;
@@ -304,10 +371,20 @@ ipcMain.handle('register-claude-desktop', async () => {
   }
 });
 
+ipcMain.handle('register-antigravity-mcp', async () => {
+  try {
+    const success = registerAntigravityMcp();
+    return { success };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
 ipcMain.handle('check-integration-status', async () => {
   const status = {
     claudeCode: false,
     claudeDesktop: false,
+    antigravityMcp: false,
     dbPath: dbPath
   };
 
@@ -334,12 +411,23 @@ ipcMain.handle('check-integration-status', async () => {
     } catch (e) {}
   }
 
+  // Check Antigravity MCP
+  const antigravityConfigPath = path.join(os.homedir(), '.gemini', 'config', 'mcp_config.json');
+  if (fs.existsSync(antigravityConfigPath)) {
+    try {
+      const content = JSON.parse(fs.readFileSync(antigravityConfigPath, 'utf8'));
+      if (content.mcpServers && content.mcpServers['kuro-pet']) {
+        status.antigravityMcp = true;
+      }
+    } catch (e) {}
+  }
+
   return status;
 });
 
 let settingsWindow = null;
 
-ipcMain.handle('open-settings-window', () => {
+function openSettingsWindow() {
   if (settingsWindow && !settingsWindow.isDestroyed()) {
     settingsWindow.focus();
     return;
@@ -369,6 +457,10 @@ ipcMain.handle('open-settings-window', () => {
       try { global.gc(); } catch (e) {}
     }
   });
+}
+
+ipcMain.handle('open-settings-window', () => {
+  openSettingsWindow();
 });
 
 ipcMain.handle('close-settings-window', () => {
@@ -376,6 +468,25 @@ ipcMain.handle('close-settings-window', () => {
     settingsWindow.close();
     settingsWindow = null;
   }
+});
+
+ipcMain.handle('hide-pet', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.hide();
+  }
+});
+
+ipcMain.handle('show-pet', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.show();
+  }
+});
+
+ipcMain.handle('is-pet-visible', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    return mainWindow.isVisible();
+  }
+  return false;
 });
 
 ipcMain.handle('quit-app', () => {
@@ -529,7 +640,7 @@ app.whenReady().then(async () => {
 
     // Create tray icon
     const { createTray } = require('./tray');
-    createTray(mainWindow, settingsData);
+    createTray(mainWindow, settingsData, openSettingsWindow);
 
     // Proactively check for updates on startup only if packaged
     if (app.isPackaged) {
