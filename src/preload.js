@@ -28,6 +28,14 @@ contextBridge.exposeInMainWorld('api', {
     return () => ipcRenderer.removeListener('agent-event', listener);
   },
 
+  onAskQuestion: (callback) => {
+    const listener = (event, data) => callback(data);
+    ipcRenderer.on('ask-question', listener);
+    return () => ipcRenderer.removeListener('ask-question', listener);
+  },
+
+  answerQuestion: (selectedIndex) => ipcRenderer.invoke('answer-question', selectedIndex),
+
   onStateCommand: (callback) => {
     const listener = (event, state) => callback(state);
     ipcRenderer.on('state-command', listener);

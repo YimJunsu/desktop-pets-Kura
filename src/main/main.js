@@ -571,6 +571,11 @@ ipcMain.handle('get-update-status', () => {
   };
 });
 
+ipcMain.handle('answer-question', (event, selectedIndex) => {
+  const { answerPendingQuestion } = require('../hooks/hook-server');
+  return answerPendingQuestion(selectedIndex);
+});
+
 let loadingWindow = null;
 
 function createLoadingWindow() {

@@ -2,6 +2,7 @@ const http = require('http');
 
 let server = null;
 let currentPort = 18900;
+let pendingAskResponse = null;
 
 function startHookServer(mainWindow) {
   const maxPortTries = 10;
@@ -44,6 +45,42 @@ function startHookServer(mainWindow) {
             res.end(JSON.stringify({ error: 'Invalid JSON' }));
           }
         });
+      } else if (req.method === 'POST' && req.url === '/ask') {
+        let body = '';
+        req.on('data', chunk => {
+          body += chunk.toString();
+        });
+        
+        req.on('end', () => {
+          try {
+            const data = JSON.parse(body);
+            
+            if (pendingAskResponse) {
+              try {
+                pendingAskResponse.writeHead(400, { 'Content-Type': 'application/json' });
+                pendingAskResponse.end(JSON.stringify({ error: 'New question asked' }));
+              } catch (e) {}
+              pendingAskResponse = null;
+            }
+            
+            pendingAskResponse = res;
+            
+            if (mainWindow && !mainWindow.isDestroyed()) {
+              mainWindow.webContents.send('ask-question', {
+                question: data.question,
+                options: data.options
+              });
+            } else {
+              res.writeHead(500, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Main window not available' }));
+              pendingAskResponse = null;
+            }
+          } catch (err) {
+            console.error('Error in /ask:', err);
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: err.message }));
+          }
+        });
       } else {
         res.writeHead(404);
         res.end();
@@ -60,6 +97,19 @@ function startHookServer(mainWindow) {
 
     server.listen(port, '127.0.0.1', () => {
       currentPort = port;
+      // Write port to ~/.kuro-pet/port.txt
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const os = require('os');
+        const portDir = path.join(os.homedir(), '.kuro-pet');
+        if (!fs.existsSync(portDir)) {
+          fs.mkdirSync(portDir, { recursive: true });
+        }
+        fs.writeFileSync(path.join(portDir, 'port.txt'), port.toString(), 'utf8');
+      } catch (e) {
+        console.error('Failed to write port file:', e);
+      }
     });
   }
 
@@ -104,4 +154,16 @@ function stopHookServer() {
   }
 }
 
-module.exports = { startHookServer, stopHookServer };
+function answerPendingQuestion(selectedIndex) {
+  if (pendingAskResponse) {
+    try {
+      pendingAskResponse.writeHead(200, { 'Content-Type': 'application/json' });
+      pendingAskResponse.end(JSON.stringify({ selectedIndex }));
+    } catch (e) {}
+    pendingAskResponse = null;
+    return true;
+  }
+  return false;
+}
+
+module.exports = { startHookServer, stopHookServer, answerPendingQuestion };

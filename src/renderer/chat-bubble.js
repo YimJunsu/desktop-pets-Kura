@@ -17,6 +17,12 @@ class ChatBubble {
     this.chatHistory = [];
     
     this.setupEvents();
+
+    if (window.api && window.api.onAskQuestion) {
+      window.api.onAskQuestion((data) => {
+        this.showAskQuestion(data.question, data.options);
+      });
+    }
   }
 
   setupEvents() {
@@ -275,6 +281,99 @@ class ChatBubble {
     this.chatHistory.push({ role: 'model', parts: [{ text: reply }] });
     
     return reply.trim();
+  }
+
+  showAskQuestion(question, options) {
+    this.show();
+    
+    // Clear previous messages or show system instructions
+    this.messagesDiv.innerHTML = `<div class="system-msg">Agent Question:</div>`;
+    
+    // Append the question
+    const qDiv = document.createElement('div');
+    qDiv.className = 'msg assistant-msg';
+    qDiv.style.fontWeight = 'bold';
+    qDiv.textContent = `Q: ${question}`;
+    this.messagesDiv.appendChild(qDiv);
+    
+    // Create option buttons
+    const btnContainer = document.createElement('div');
+    btnContainer.className = 'ask-options-container';
+    btnContainer.style.display = 'flex';
+    btnContainer.style.flexDirection = 'column';
+    btnContainer.style.gap = '8px';
+    btnContainer.style.marginTop = '10px';
+    
+    // Set up a 60-second UI timeout matching the bridge timeout
+    const uiTimeout = setTimeout(() => {
+      // Disable all buttons and show timeout message
+      const buttons = btnContainer.querySelectorAll('button');
+      buttons.forEach(b => {
+        b.disabled = true;
+        b.style.opacity = '0.5';
+      });
+      const timeoutMsg = document.createElement('div');
+      timeoutMsg.className = 'system-msg';
+      timeoutMsg.style.color = '#ff4d4d';
+      timeoutMsg.style.marginTop = '8px';
+      timeoutMsg.textContent = '⏱️ 답변 시간이 초과되었습니다 (60초).';
+      btnContainer.appendChild(timeoutMsg);
+      
+      // Clean container after 3 seconds
+      setTimeout(() => {
+        btnContainer.remove();
+      }, 3000);
+    }, 60000);
+    
+    options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'ask-opt-btn';
+      btn.style.padding = '6px 12px';
+      btn.style.border = '1px solid #FF7E5F';
+      btn.style.borderRadius = '15px';
+      btn.style.background = 'transparent';
+      btn.style.color = '#FFFFFF';
+      btn.style.cursor = 'pointer';
+      btn.style.textAlign = 'left';
+      btn.style.transition = 'all 0.2s';
+      btn.textContent = `${idx + 1}. ${opt}`;
+      
+      btn.addEventListener('mouseover', () => {
+        btn.style.background = '#FF7E5F';
+        btn.style.color = '#000000';
+      });
+      btn.addEventListener('mouseout', () => {
+        btn.style.background = 'transparent';
+        btn.style.color = '#FFFFFF';
+      });
+      
+      btn.addEventListener('click', async () => {
+        // Clear the timeout!
+        clearTimeout(uiTimeout);
+        
+        // Disable all buttons in this container to prevent double click
+        const buttons = btnContainer.querySelectorAll('button');
+        buttons.forEach(b => b.disabled = true);
+        
+        // Show selection in chat
+        this.appendMessage('user', `Answer: ${opt}`);
+        
+        // Send index back to main process
+        if (window.api && window.api.answerQuestion) {
+          await window.api.answerQuestion(idx);
+        }
+        
+        // Clean up buttons after a short delay
+        setTimeout(() => {
+          btnContainer.remove();
+        }, 1000);
+      });
+      
+      btnContainer.appendChild(btn);
+    });
+    
+    this.messagesDiv.appendChild(btnContainer);
+    this.messagesDiv.scrollTop = this.messagesDiv.scrollHeight;
   }
 
   showSystemMessage(text) {
