@@ -28,6 +28,7 @@
   "build": {
     "appId": "com.kuro.desktop-pet",
     "productName": "Kuro Desktop Pet",
+    "artifactName": "Kuro-Desktop-Pet-Setup-${version}.${ext}",
     "npmRebuild": false,
     "files": [
       "src/**/*",
