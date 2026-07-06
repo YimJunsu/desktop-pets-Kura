@@ -393,7 +393,9 @@ ipcMain.handle('check-integration-status', async () => {
   if (fs.existsSync(claudeSettingsPath)) {
     try {
       const content = JSON.parse(fs.readFileSync(claudeSettingsPath, 'utf8'));
-      if (content.hooks && content.hooks.preCommand && content.hooks.preCommand.includes('18900')) {
+      if (content.hooks && Object.values(content.hooks).some(arr =>
+        Array.isArray(arr) && arr.some(g => Array.isArray(g.hooks) &&
+          g.hooks.some(h => typeof h.command === 'string' && h.command.includes('kuro-hook.js'))))) {
         status.claudeCode = true;
       }
     } catch (e) {}
@@ -651,11 +653,29 @@ app.whenReady().then(async () => {
         }
       }
 
+      // Refresh Claude Code pet hook relay + paths if already registered.
+      // Also auto-migrate users who opted in via the old broken preCommand/postCommand format.
+      const claudeSettingsPath = path.join(os.homedir(), '.claude', 'settings.json');
+      if (fs.existsSync(claudeSettingsPath)) {
+        const raw = fs.readFileSync(claudeSettingsPath, 'utf8');
+        let legacyOptIn = false;
+        try {
+          const s = JSON.parse(raw);
+          legacyOptIn = !!(s.hooks && (s.hooks.preCommand || s.hooks.postCommand));
+        } catch (e) {}
+        if (raw.includes('kuro-hook.js') || legacyOptIn) {
+          registerClaudeHooks();
+        }
+      }
+
       const antigravityConfigPath = path.join(os.homedir(), '.gemini', 'config', 'mcp_config.json');
       if (fs.existsSync(antigravityConfigPath)) {
-        const content = JSON.parse(fs.readFileSync(antigravityConfigPath, 'utf8'));
-        if (content.mcpServers && content.mcpServers['kuro-pet']) {
-          registerAntigravityMcp();
+        const fileContent = fs.readFileSync(antigravityConfigPath, 'utf8').trim();
+        if (fileContent) {
+          const content = JSON.parse(fileContent);
+          if (content.mcpServers && content.mcpServers['kuro-pet']) {
+            registerAntigravityMcp();
+          }
         }
       }
     } catch (e) {

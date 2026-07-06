@@ -196,7 +196,7 @@ class DragHandler {
     const svg = this.container.querySelector('svg');
     if (svg) {
       const model = this.renderer.settings.model;
-      if (model === 'oyajichi') {
+      if (model === 'oyajichi' || model === 'maenggu') {
         svg.style.transformOrigin = 'center top';
       } else {
         svg.style.transformOrigin = 'center bottom';

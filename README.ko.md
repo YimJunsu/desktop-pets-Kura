@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/release-v1.0.0-8B5CF6?style=flat-square" alt="release" />
+  <img src="https://img.shields.io/badge/release-v1.0.1-8B5CF6?style=flat-square" alt="release" />
   <img src="https://img.shields.io/badge/platform-Windows-blue?style=flat-square" alt="platform" />
   <img src="https://img.shields.io/github/license/YimJunsu/desktop-pets-Kura?style=flat-square&color=FF7E5F" alt="license" />
   <img src="https://img.shields.io/github/stars/YimJunsu/desktop-pets-Kura?style=flat-square&color=FEB47B" alt="stars" />

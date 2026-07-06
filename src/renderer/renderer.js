@@ -29,7 +29,7 @@ class PetRenderer {
         this.settings = { ...this.settings, ...savedSettings };
         
         // Failsafe fallback for deleted or invalid models
-        const validModels = ['clawd', 'oyajichi', 'blackyang', 'cheeseyang', 'raccoon', 'momongga'];
+        const validModels = ['clawd', 'oyajichi', 'blackyang', 'cheeseyang', 'raccoon', 'momongga', 'maenggu', 'bbangbbang', 'hangyodon'];
         if (!this.settings.model || !validModels.includes(this.settings.model)) {
           this.settings.model = 'blackyang';
         }
