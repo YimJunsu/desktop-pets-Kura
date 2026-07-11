@@ -5,7 +5,7 @@
 <h1 align="center">Kuro Desktop Pet (쿠로 데스크탑 펫)</h1>
 
 <p align="center">
-  <strong>바탕화면에서 둥둥 떠다니며 집사와 함께 코딩하고 소통하는 귀여운 5종 데스크탑 펫 패밀리.</strong>
+  <strong>바탕화면에서 둥둥 떠다니며 집사와 함께 코딩하고 소통하는 귀여운 9종 데스크탑 펫 패밀리.</strong>
 </p>
 
 <p align="center">
@@ -37,10 +37,10 @@
   <img src="assets/sprites/raccoon/idle.svg" width="64" height="64" alt="Raccoon" />
   <img src="assets/sprites/clawd/idle.svg" width="64" height="64" alt="Clawd" />
   <img src="assets/sprites/oyajichi/idle.svg" width="64" height="64" alt="OyaJiChi" />
-  <img src="assets/sprites/momongga/idle.png" width="64" height="64" alt="Momongga" />
-  <img src="assets/sprites/maenggu/idle.png" width="64" height="64" alt="Maenggu" />
   <img src="assets/sprites/bbangbbang/idle.svg" width="64" height="64" alt="Bbangbbang" />
   <img src="assets/sprites/hangyodon/idle.svg" width="64" height="64" alt="Hangyodon" />
+  <img src="assets/sprites/momongga/idle.png" width="64" height="64" alt="Momongga" />
+  <img src="assets/sprites/maenggu/idle.png" width="64" height="64" alt="Maenggu" />
 </p>
 
 1. **🐱 블랙냥 (BlackYang)**: 이 프로젝트의 트레이드마크인 검정 아기 고양이. 살랑살랑 꼬리를 흔들며, 집사에게 `~냥/~냥냥🐾` 체로 귀엽게 응답합니다.
@@ -48,10 +48,10 @@
 3. **🦝 너구리 (Raccoon)**: 집사가 타자를 치는 순간 무서운 속도로 노트북을 꺼내 앞발을 뚱땅거리며 코딩에 동참하는 말썽꾸러기 너구리.
 4. **🐙 클라우드 (Clawd)**: 데스크탑 공중을 둥둥 떠다니는 다정한 주황색 산호 문어. 눈을 깜빡이며 간결하고 다정한 대답을 건넵니다.
 5. **👨‍🦳 오야지치 (OyaJiChi)**: 콧수염을 기른 엉뚱한 대머리 동네 삼촌. 약간의 투덜거림과 함께 정감 넘치는 유쾌한 아저씨 말투를 씁니다.
-6. **🐿️ 모몽가 (Momongga)**: *치이카와*에 나오는 귀엽고 심술쟁이인 흰 날다람쥐. 칭찬과 애정을 듬뿍 받길 좋아하는 어리광쟁이 성격입니다.
-7. **👦 맹구 (Maenggu)**: *짱구는 못말려*의 콧물을 흘리는 조용하고 엉뚱한 소년. 돌멩이 수집을 광적으로 좋아하는 성격입니다.
-8. **🟢 빵빵이 (Bbangbbang)**: 초록색 셔츠를 입은 웹툰 *빵빵이의 일상* 주인공. 유쾌하고 엽기적이며 깜짝 놀랄 만큼 시끄럽고 장난기 넘칩니다!
-9. **🐟 한교동 (Hangyodon)**: 산리오의 감수성 풍부하고 외로움을 타는 파란 물고기 요괴. 단짝인 분홍 문어 사유리와 항상 함께 다닙니다.
+6. **🟢 빵빵이 (Bbangbbang)**: 초록색 셔츠를 입은 웹툰 *빵빵이의 일상* 주인공. 유쾌하고 엽기적이며 깜짝 놀랄 만큼 시끄럽고 장난기 넘칩니다!
+7. **🐟 한교동 (Hangyodon)**: 산리오의 감수성 풍부하고 외로움을 타는 파란 물고기 요괴. 단짝인 분홍 문어 사유리와 항상 함께 다닙니다.
+8. **🐿️ 모몽가 (Momongga)**: *치이카와*에 나오는 귀엽고 심술쟁이인 흰 날다람쥐. 칭찬과 애정을 듬뿍 받길 좋아하는 어리광쟁이 성격입니다.
+9. **👦 맹구 (Maenggu)**: *짱구는 못말려*의 콧물을 흘리는 조용하고 엉뚱한 소년. 돌멩이 수집을 광적으로 좋아하는 성격입니다.
 
 ---
 

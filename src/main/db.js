@@ -50,6 +50,7 @@ const DEFAULT_SETTINGS = {
   size: 'M',
   followMode: 'false',
   sleepMode: 'false',
+  typingReaction: 'true',
   position: 'null',
   geminiApiKey: '',
   model: 'clawd'

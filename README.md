@@ -37,10 +37,10 @@ Meet the nine unique mascots available inside the control dashboard (⚙️). Ea
   <img src="assets/sprites/raccoon/idle.svg" width="64" height="64" alt="Raccoon" />
   <img src="assets/sprites/clawd/idle.svg" width="64" height="64" alt="Clawd" />
   <img src="assets/sprites/oyajichi/idle.svg" width="64" height="64" alt="OyaJiChi" />
-  <img src="assets/sprites/momongga/idle.png" width="64" height="64" alt="Momongga" />
-  <img src="assets/sprites/maenggu/idle.png" width="64" height="64" alt="Maenggu" />
   <img src="assets/sprites/bbangbbang/idle.svg" width="64" height="64" alt="Bbangbbang" />
   <img src="assets/sprites/hangyodon/idle.svg" width="64" height="64" alt="Hangyodon" />
+  <img src="assets/sprites/momongga/idle.png" width="64" height="64" alt="Momongga" />
+  <img src="assets/sprites/maenggu/idle.png" width="64" height="64" alt="Maenggu" />
 </p>
 
 1. **🐱 BlackYang (Kuro-chan)**: Our signature chibi black cat. Loves to wag its tail, and responds with cute cat slangs (`~nyan nyange🐾`).
@@ -48,10 +48,10 @@ Meet the nine unique mascots available inside the control dashboard (⚙️). Ea
 3. **🦝 Raccoon (Kun)**: A mischievous critter that frantically bangs on a keyboard whenever you start typing in any program.
 4. **🐙 Clawd (Octopus)**: A friendly orange coral octopus that floats calmly, blinking and providing concise, positive coding responses.
 5. **👨‍🦳 OyaJiChi (Uncle)**: A funny, slightly grumbling middle-aged uncle with a bald head and thin mustache. Responds with dry, humorous uncle jokes.
-6. **🐿️ Momongga (Momonga)**: A cute, slightly spoiled white flying squirrel pet from *Chiikawa*. Loves praise and attention!
-7. **👦 Maenggu (Boo)**: A spaced-out boy pet with a runny nose from *Crayon Shin-chan*. Loves collecting pretty pebbles and stones.
-8. **🟢 Bbangbbang (빵빵이)**: A funny and hyperactive webtoon character in a green shirt. Loud, loud, and loudly expressive!
-9. **🐟 Hangyodon (한교동)**: A blue fish-man Sanrio pet with a pink octopus friend, Sayuri. Sensitive, friendly, and always dreaming of being a hero.
+6. **🟢 Bbangbbang (빵빵이)**: A funny and hyperactive webtoon character in a green shirt. Loud, loud, and loudly expressive!
+7. **🐟 Hangyodon (한교동)**: A blue fish-man Sanrio pet with a pink octopus friend, Sayuri. Sensitive, friendly, and always dreaming of being a hero.
+8. **🐿️ Momongga (Momonga)**: A cute, slightly spoiled white flying squirrel pet from *Chiikawa*. Loves praise and attention!
+9. **👦 Maenggu (Boo)**: A spaced-out boy pet with a runny nose from *Crayon Shin-chan*. Loves collecting pretty pebbles and stones.
 
 ---
 
