@@ -8,6 +8,7 @@ class PetRenderer {
       size: 'M',
       followMode: false,
       sleepMode: false,
+      typingReaction: true,
       geminiApiKey: ''
     };
     
@@ -270,6 +271,8 @@ class PetRenderer {
         if (!data.value && this.stateMachine.currentStateName === 'following') {
           this.stateMachine.setState('idle');
         }
+      } else if (data.key === 'typingReaction') {
+        this.settings.typingReaction = data.value;
       } else if (data.key === 'geminiApiKey') {
         this.settings.geminiApiKey = data.value;
       }

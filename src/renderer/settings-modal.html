@@ -696,6 +696,13 @@
                   <span class="slider"></span>
                 </label>
               </div>
+              <div class="toggle-item">
+                <span>Typing Action (키보드 타자 반응)</span>
+                <label class="switch">
+                  <input type="checkbox" id="typing-toggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -821,6 +828,7 @@
       const sizeBtns = document.querySelectorAll('.size-btn');
       const followToggle = document.getElementById('follow-toggle');
       const sleepToggle = document.getElementById('sleep-toggle');
+      const typingToggle = document.getElementById('typing-toggle');
       const apiKeyInput = document.getElementById('api-key-input');
       const closeBtn = document.getElementById('close-modal-btn');
       const headerClose = document.getElementById('close-modal-btn-header');
@@ -880,6 +888,12 @@
       sleepToggle.checked = !!settings.sleepMode;
       sleepToggle.addEventListener('change', async () => {
         await window.api.updateSettings('sleepMode', sleepToggle.checked);
+      });
+      
+      // 2d-2. Typing Toggle
+      typingToggle.checked = settings.typingReaction !== 'false' && settings.typingReaction !== false;
+      typingToggle.addEventListener('change', async () => {
+        await window.api.updateSettings('typingReaction', typingToggle.checked);
       });
 
       // 2e. Gemini API Key Input

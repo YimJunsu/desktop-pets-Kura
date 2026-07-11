@@ -10,6 +10,7 @@ class Animator {
     
     // Direction: false = right, true = left (mirrored)
     this.isFlipped = false;
+    this.lastLookLeft = false;
     this.currentAnimation = null;
     
     // Bind mouseenter and mouseleave to container for click-through toggling
@@ -19,6 +20,12 @@ class Animator {
   async setAnimation(name, force = false) {
     if (this.currentAnimation === name && !force) return;
     this.currentAnimation = name;
+
+    // Force recalculate the flip direction because Momonga's walking sprites naturally face right
+    // while other states naturally face left!
+    if (this.lastLookLeft !== undefined) {
+      this.setDirection(this.lastLookLeft, true);
+    }
 
     // Clear any active sprite sheet animation intervals
     if (this.spriteInterval) {
@@ -248,9 +255,20 @@ class Animator {
     }
   }
 
-  setDirection(lookLeft) {
-    if (this.isFlipped === lookLeft) return;
-    this.isFlipped = lookLeft;
+  setDirection(lookLeft, force = false) {
+    this.lastLookLeft = lookLeft;
+    
+    const isMomongga = this.renderer.settings.model === 'momongga';
+    const isWalkingOrRunning = this.currentAnimation === 'walk' || this.currentAnimation === 'run';
+    
+    let targetFlip = lookLeft;
+    if (isMomongga && isWalkingOrRunning) {
+      // Momonga naturally faces right in his walk/run sprites, so invert the flip compared to normal left-facing pets
+      targetFlip = !lookLeft;
+    }
+    
+    if (this.isFlipped === targetFlip && !force) return;
+    this.isFlipped = targetFlip;
     this.applyFlip();
   }
 

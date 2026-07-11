@@ -36,9 +36,16 @@ class StateMachine {
     if (window.api && window.api.onGlobalInput) {
       window.api.onGlobalInput((data) => {
         if (data.type === 'typing') {
+          // Ignore typing if reaction is disabled
+          if (this.renderer.settings.typingReaction === false || this.renderer.settings.typingReaction === 'false') {
+            return;
+          }
+
           if (
             this.currentStateName === 'grabbed' ||
             this.currentStateName === 'sleeping' ||
+            this.currentStateName === 'happy' ||
+            this.currentStateName === 'sad' ||
             this.renderer.isAgentSessionActive
           ) {
             return;
