@@ -20,6 +20,12 @@ class Animator {
     if (this.currentAnimation === name && !force) return;
     this.currentAnimation = name;
 
+    // Clear any active sprite sheet animation intervals
+    if (this.spriteInterval) {
+      clearInterval(this.spriteInterval);
+      this.spriteInterval = null;
+    }
+
     // Map state machine state names to actual SVG filenames
     let fileName = name;
     if (name === 'walking' || name === 'following') fileName = 'walk';
@@ -44,8 +50,10 @@ class Animator {
       // Clear existing renders
       const existingSvg = this.container.querySelector('svg');
       const existingImg = this.container.querySelector('img.pet-gif');
+      const existingDiv = this.container.querySelector('div.pet-gif');
       if (existingSvg) existingSvg.remove();
       if (existingImg) existingImg.remove();
+      if (existingDiv) existingDiv.remove();
       
       const parser = new DOMParser();
       const doc = parser.parseFromString(svgText, 'image/svg+xml');
@@ -65,61 +73,158 @@ class Animator {
         this.renderer.eyeTracker.onSVGLoaded();
       }
     } catch (err) {
-      // SVG load failed - Fallback to transparent GIF
+      // SVG load failed - Fallback to transparent PNG or GIF
+      let framesCount = 1;
+      if (fileName === 'walk' || fileName === 'run') {
+        framesCount = 4;
+      } else if (fileName === 'typing') {
+        framesCount = 3;
+      }
+
+      const seqPath0 = `../../assets/sprites/${model}/${fileName}_0.png`;
+      const pngPath = `../../assets/sprites/${model}/${fileName}.png`;
       const gifPath = `../../assets/sprites/${model}/${fileName}.gif`;
-      console.log(`[Animator] SVG not found for state '${name}'. Falling back to GIF: ${gifPath}`);
+      console.log(`[Animator] SVG not found for state '${name}'. Checking for sequence or PNG...`);
       
-      try {
-        // Wait for fade out to complete
-        await new Promise(resolve => setTimeout(resolve, 50));
+      const checkSeqImg = new Image();
+      checkSeqImg.onload = () => {
+        // Frame sequence exists! Play frame sequence animation (prevents bleeding)
+        this.loadSequenceAnimation(name, fileName, framesCount, model);
+      };
+      
+      checkSeqImg.onerror = () => {
+        // No sequence, try single sprite sheet or static PNG
+        const tempImg = new Image();
+        tempImg.onload = () => {
+          this.loadSinglePngOrSpriteSheet(name, fileName, framesCount, pngPath);
+        };
+        tempImg.onerror = () => {
+          console.log(`[Animator] PNG not found for state '${name}'. Falling back to GIF: ${gifPath}`);
+          this.loadGifFallback(name, fileName, gifPath);
+        };
+        tempImg.src = pngPath;
+      };
+      
+      if (framesCount > 1) {
+        checkSeqImg.src = seqPath0;
+      } else {
+        checkSeqImg.onerror();
+      }
+    }
+  }
+
+  async loadSequenceAnimation(name, fileName, framesCount, model) {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      const existingSvg = this.container.querySelector('svg');
+      const existingImg = this.container.querySelector('img.pet-gif');
+      const existingDiv = this.container.querySelector('div.pet-gif');
+      if (existingSvg) existingSvg.remove();
+      if (existingImg) existingImg.remove();
+      if (existingDiv) existingDiv.remove();
+      
+      const imgEl = document.createElement('img');
+      imgEl.className = 'pet-gif';
+      imgEl.draggable = false;
+      imgEl.style.width = '100%';
+      imgEl.style.height = '100%';
+      imgEl.style.objectFit = 'contain';
+      imgEl.style.webkitUserDrag = 'none';
+      
+      let currentFrame = 0;
+      imgEl.src = `../../assets/sprites/${model}/${fileName}_${currentFrame}.png`;
+      this.container.appendChild(imgEl);
+      
+      this.spriteInterval = setInterval(() => {
+        currentFrame = (currentFrame + 1) % framesCount;
+        imgEl.src = `../../assets/sprites/${model}/${fileName}_${currentFrame}.png`;
+      }, 150);
+      
+      this.applyFlip();
+      this.container.style.opacity = '1';
+    } catch (err) {
+      console.error(`Failed to load sequence animation for ${name}:`, err);
+      if (name !== 'error') this.setAnimation('error');
+    }
+  }
+
+  async loadSinglePngOrSpriteSheet(name, fileName, framesCount, pngPath) {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      const existingSvg = this.container.querySelector('svg');
+      const existingImg = this.container.querySelector('img.pet-gif');
+      const existingDiv = this.container.querySelector('div.pet-gif');
+      if (existingSvg) existingSvg.remove();
+      if (existingImg) existingImg.remove();
+      if (existingDiv) existingDiv.remove();
+      
+      if (framesCount > 1) {
+        // Render as a div with background-image step animation
+        const divEl = document.createElement('div');
+        divEl.className = 'pet-gif sprite-animated';
+        divEl.style.width = '100%';
+        divEl.style.height = '100%';
+        divEl.style.backgroundImage = `url('${pngPath}')`;
+        divEl.style.backgroundRepeat = 'no-repeat';
+        divEl.style.backgroundSize = `${framesCount * 100}% 100%`;
+        divEl.style.backgroundPosition = '0% 0%';
         
-        // Clear existing renders
-        const existingSvg = this.container.querySelector('svg');
-        const existingImg = this.container.querySelector('img.pet-gif');
-        if (existingSvg) existingSvg.remove();
-        if (existingImg) existingImg.remove();
+        let currentFrame = 0;
+        this.spriteInterval = setInterval(() => {
+          currentFrame = (currentFrame + 1) % framesCount;
+          const percentage = framesCount > 1 ? (currentFrame / (framesCount - 1)) * 100 : 0;
+          divEl.style.backgroundPosition = `${percentage}% 0%`;
+        }, 150);
         
-        // Inject <img> element pointing to transparent GIF
+        this.container.appendChild(divEl);
+      } else {
         const imgEl = document.createElement('img');
-        imgEl.src = gifPath;
         imgEl.className = 'pet-gif';
+        imgEl.draggable = false;
         imgEl.style.width = '100%';
         imgEl.style.height = '100%';
         imgEl.style.objectFit = 'contain';
+        imgEl.style.webkitUserDrag = 'none';
+        imgEl.src = pngPath;
         this.container.appendChild(imgEl);
-        
-        // Re-apply flip direction
-        this.applyFlip();
-        
-        // Fade in
-        this.container.style.opacity = '1';
-      } catch (gifErr) {
-        console.error(`Failed to load GIF fallback for ${name}:`, gifErr);
-        
-        // Final fallback: Load default 'blackyang' error.svg to prevent blank screen
-        if (name !== 'error') {
-          console.log('[Animator] Triggering ultimate error fallback state...');
-          this.setAnimation('error');
-        } else {
-          // If even error fallback fails, load blackyang/error.svg
-          const ultimateFallbackPath = `../../assets/sprites/blackyang/error.svg`;
-          try {
-            const ultimateSvgText = await this.loadSVG(ultimateFallbackPath);
-            const existingSvg = this.container.querySelector('svg');
-            const existingImg = this.container.querySelector('img.pet-gif');
-            if (existingSvg) existingSvg.remove();
-            if (existingImg) existingImg.remove();
-            
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(ultimateSvgText, 'image/svg+xml');
-            const newSvg = doc.querySelector('svg');
-            if (newSvg) this.container.appendChild(newSvg);
-            this.applyFlip();
-            this.container.style.opacity = '1';
-          } catch (e) {
-            console.error('Ultimate fallback failure:', e);
-          }
-        }
+      }
+      
+      this.applyFlip();
+      this.container.style.opacity = '1';
+    } catch (loadErr) {
+      console.error(`Failed to build PNG element for ${name}:`, loadErr);
+      if (name !== 'error') this.setAnimation('error');
+    }
+  }
+
+  async loadGifFallback(name, fileName, gifPath) {
+    try {
+      // Clear existing renders
+      const existingSvg = this.container.querySelector('svg');
+      const existingImg = this.container.querySelector('img.pet-gif');
+      const existingDiv = this.container.querySelector('div.pet-gif');
+      if (existingSvg) existingSvg.remove();
+      if (existingImg) existingImg.remove();
+      if (existingDiv) existingDiv.remove();
+      
+      const imgEl = document.createElement('img');
+      imgEl.src = gifPath;
+      imgEl.className = 'pet-gif';
+      imgEl.draggable = false;
+      imgEl.style.width = '100%';
+      imgEl.style.height = '100%';
+      imgEl.style.objectFit = 'contain';
+      imgEl.style.webkitUserDrag = 'none';
+      this.container.appendChild(imgEl);
+      
+      this.applyFlip();
+      this.container.style.opacity = '1';
+    } catch (gifErr) {
+      console.error(`Failed to load GIF fallback for ${name}:`, gifErr);
+      if (name !== 'error') {
+        this.setAnimation('error');
       }
     }
   }
@@ -152,7 +257,8 @@ class Animator {
   applyFlip() {
     const svg = this.container.querySelector('svg');
     const img = this.container.querySelector('img.pet-gif');
-    const target = svg || img;
+    const div = this.container.querySelector('div.pet-gif');
+    const target = svg || img || div;
     if (target) {
       if (this.isFlipped) {
         target.classList.add('flipped');

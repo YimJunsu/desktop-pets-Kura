@@ -12,8 +12,31 @@ function setupGlobalInput(mainWindow) {
     let lastMouseMoveTime = 0;
     let lastKeyTime = 0;
 
+    const IGNORED_KEYCODES = new Set([
+      1,    // Escape
+      29,   // Left Ctrl
+      3613, // Right Ctrl
+      42,   // Left Shift
+      54,   // Right Shift
+      56,   // Left Alt
+      3640, // Right Alt
+      3675, // Left Win
+      3676, // Right Win
+      3639, // Print Screen / PrtScn
+      58,   // Caps Lock
+      69,   // Num Lock
+      70,   // Scroll Lock
+      // Function keys F1 - F12
+      59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 87, 88
+    ]);
+
     // Listen for global key down
     uiohook.on('keydown', (e) => {
+      // Ignore single modifier/function keys
+      if (IGNORED_KEYCODES.has(e.keycode)) {
+        return;
+      }
+
       const now = Date.now();
       // Debounce key presses slightly (100ms) to avoid spamming IPC
       if (now - lastKeyTime > 100) {

@@ -19,6 +19,34 @@
     .right-paw {
       animation: type-right 0.15s infinite ease-in-out;
     }
+    @keyframes type-code-1 {
+      0%, 100% { width: 0; }
+      15%, 85% { width: 4.5px; }
+    }
+    @keyframes type-code-2 {
+      0%, 20%, 100% { width: 0; }
+      35%, 85% { width: 5.5px; }
+    }
+    @keyframes type-code-3 {
+      0%, 40%, 100% { width: 0; }
+      55%, 85% { width: 3.5px; }
+    }
+    @keyframes type-code-4 {
+      0%, 60%, 100% { width: 0; }
+      75%, 85% { width: 5px; }
+    }
+    .code-line-1 {
+      animation: type-code-1 1.5s infinite steps(4, end);
+    }
+    .code-line-2 {
+      animation: type-code-2 1.5s infinite steps(5, end);
+    }
+    .code-line-3 {
+      animation: type-code-3 1.5s infinite steps(3, end);
+    }
+    .code-line-4 {
+      animation: type-code-4 1.5s infinite steps(5, end);
+    }
   </style>
   <g transform="translate(4, 4)">
     <!-- White background outline silhouette -->
@@ -65,5 +93,22 @@
     <rect x="14" y="7" width="3" height="3" fill="#ffffff" />
     <rect x="7.8" y="8.2" width="1.2" height="1.2" fill="#000000" />
     <rect x="14.8" y="8.2" width="1.2" height="1.2" fill="#000000" />
+  </g>
+
+  <!-- CMD Window on the top right -->
+  <g class="cmd-window" filter="url(#shadow)">
+    <!-- Window Border/Screen -->
+    <rect x="22" y="3" width="8" height="6" rx="0.5" fill="#1e1e1e" stroke="#9ca3af" stroke-width="0.4" />
+    <!-- Top Bar -->
+    <rect x="22" y="3" width="8" height="1.2" rx="0.3" fill="#333333" />
+    <!-- Window buttons -->
+    <circle cx="23.0" cy="3.6" r="0.25" fill="#ef4444" />
+    <circle cx="23.7" cy="3.6" r="0.25" fill="#f59e0b" />
+    <circle cx="24.4" cy="3.6" r="0.25" fill="#10b981" />
+    <!-- Code Lines -->
+    <rect class="code-line-1" x="23" y="4.8" width="0" height="0.4" fill="#22c55e" />
+    <rect class="code-line-2" x="23" y="5.6" width="0" height="0.4" fill="#22c55e" />
+    <rect class="code-line-3" x="23" y="6.4" width="0" height="0.4" fill="#22c55e" />
+    <rect class="code-line-4" x="23" y="7.2" width="0" height="0.4" fill="#22c55e" />
   </g>
 </svg>

@@ -193,7 +193,7 @@ class DragHandler {
 
   onGrabbedEnter() {
     this.container.classList.add('grabbed-active');
-    const svg = this.container.querySelector('svg');
+    const svg = this.container.querySelector('svg, img.pet-gif, div.pet-gif');
     if (svg) {
       const model = this.renderer.settings.model;
       if (model === 'oyajichi' || model === 'maenggu') {
@@ -208,7 +208,7 @@ class DragHandler {
     this.container.classList.remove('grabbed-active');
     
     // Bouncy spring back effect
-    const svg = this.container.querySelector('svg');
+    const svg = this.container.querySelector('svg, img.pet-gif, div.pet-gif');
     if (svg) {
       svg.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35)';
       svg.style.transform = 'scale(1)';
@@ -225,7 +225,7 @@ class DragHandler {
   }
 
   applyMochiStretch() {
-    const svg = this.container.querySelector('svg');
+    const svg = this.container.querySelector('svg, img.pet-gif, div.pet-gif');
     if (!svg) return;
     
     const stretchSpeed = Math.abs(this.vy);

@@ -93,26 +93,47 @@ class ChatBubble {
     }
     this.container.style.bottom = `${bottomOffset}px`;
 
-    this.container.classList.remove('hidden');
-    this.inputArea.classList.remove('hidden');
-    
-    // Allow animation to kick in
-    setTimeout(() => {
-      this.container.classList.add('visible');
-      this.inputArea.classList.add('visible');
-    }, 10);
-    
+    // Clear any existing auto-hide timeout
+    if (this.autoHideTimeout) {
+      clearTimeout(this.autoHideTimeout);
+      this.autoHideTimeout = null;
+    }
+
     // Show input field if Gemini API key is configured
     const apiKey = this.renderer.settings.geminiApiKey;
     if (apiKey) {
+      this.container.classList.remove('hidden');
+      this.inputArea.classList.remove('hidden');
+      
+      // Allow animation to kick in
+      setTimeout(() => {
+        this.container.classList.add('visible');
+        this.inputArea.classList.add('visible');
+      }, 10);
+
       this.inputField.style.display = 'block';
       this.sendBtn.style.display = 'block';
       this.messagesDiv.innerHTML = '<div class="system-msg">Ask me anything! Click the chat icon again to close.</div>';
       this.inputField.focus();
     } else {
-      this.inputField.style.display = 'none';
-      this.sendBtn.style.display = 'none';
-      this.messagesDiv.innerHTML = '<div class="system-msg">Gemini API Key is not configured. <a id="open-settings-link" style="color: #FF7E5F; text-decoration: underline; cursor: pointer;">Open Settings</a> to register it!</div>';
+      // Gemini API Key is missing: Hide input panel entirely and show speech warning bubble above pet's head
+      this.container.classList.remove('hidden');
+      this.inputArea.classList.add('hidden');
+      this.inputArea.classList.remove('visible');
+
+      // Allow bubble fade-in animation to kick in
+      setTimeout(() => {
+        this.container.classList.add('visible');
+      }, 10);
+
+      this.messagesDiv.innerHTML = `
+        <div class="system-msg" style="text-align: center; font-weight: bold; color: #FF7E5F; line-height: 1.5;">
+          Gemini API가 연결되어 있지 않습니다!<br>
+          <a id="open-settings-link" style="color: #6366F1; text-decoration: underline; cursor: pointer; display: inline-block; margin-top: 8px;">
+            설정 열기
+          </a>
+        </div>
+      `;
       
       // Bind open settings trigger
       setTimeout(() => {
@@ -127,6 +148,11 @@ class ChatBubble {
           });
         }
       }, 50);
+
+      // Auto-hide the warning bubble after 10 seconds
+      this.autoHideTimeout = setTimeout(() => {
+        this.hide();
+      }, 10000);
     }
     
     this.renderer.stateMachine.resetInactivity();
@@ -134,6 +160,10 @@ class ChatBubble {
 
   hide() {
     this.isVisible = false;
+    if (this.autoHideTimeout) {
+      clearTimeout(this.autoHideTimeout);
+      this.autoHideTimeout = null;
+    }
     this.container.classList.remove('visible');
     this.inputArea.classList.remove('visible');
     setTimeout(() => {
@@ -224,8 +254,6 @@ class ChatBubble {
   }
 
   async callGeminiAPI(prompt, apiKey) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-    
     const currentModel = this.renderer.settings.model || 'clawd';
     let systemText = '';
     if (currentModel === 'clawd') {
@@ -264,27 +292,58 @@ class ChatBubble {
       this.chatHistory.shift();
     }
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        contents: this.chatHistory,
-        generationConfig: {
-          maxOutputTokens: 100,
-          temperature: 0.7
-        }
-      })
-    });
-
-    if (!response.ok) {
-      const errData = await response.json();
-      throw new Error(errData.error?.message || `HTTP ${response.status}`);
+    // Attempt calling Gemini API with v1 (stable) first, then fallback to v1beta if v1 fails
+    let response;
+    let reply = "";
+    try {
+      const stableUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      response = await fetch(stableUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contents: this.chatHistory,
+          generationConfig: {
+            maxOutputTokens: 100,
+            temperature: 0.7
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error?.message || `HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "🐙 *blinks*";
+    } catch (v1Err) {
+      console.warn('Gemini stable v1 endpoint failed, attempting v1beta fallback...', v1Err.message);
+      
+      const betaUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      response = await fetch(betaUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contents: this.chatHistory,
+          generationConfig: {
+            maxOutputTokens: 100,
+            temperature: 0.7
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error?.message || `HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "🐙 *blinks*";
     }
-
-    const data = await response.json();
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "🐙 *blinks*";
     
     // Add reply to history
     this.chatHistory.push({ role: 'model', parts: [{ text: reply }] });

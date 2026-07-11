@@ -129,11 +129,11 @@ class FollowMode {
     const dy = ty - petCenterY;
     const distance = Math.hypot(dx, dy);
     
-    // Face the direction of travel
+    // Face the direction of travel (assets naturally face left)
     if (dx < -5) {
-      this.renderer.animator.setDirection(true); // look left
+      this.renderer.animator.setDirection(false); // look left (no flip)
     } else if (dx > 5) {
-      this.renderer.animator.setDirection(false); // look right
+      this.renderer.animator.setDirection(true); // look right (flip)
     }
     
     // Check if arrived

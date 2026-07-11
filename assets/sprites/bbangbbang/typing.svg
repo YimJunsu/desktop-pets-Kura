@@ -8,20 +8,59 @@
       <stop offset="100%" stop-color="#FFD1B3" />
     </linearGradient>
   </defs>
-    <g transform="translate(1.5, 3)" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)">
-    
+  <style>
+    @keyframes type-left {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(1.2px); }
+    }
+    @keyframes type-right {
+      0%, 100% { transform: translateY(1.2px); }
+      50% { transform: translateY(0px); }
+    }
+    .left-paw {
+      animation: type-left 0.15s infinite ease-in-out;
+    }
+    .right-paw {
+      animation: type-right 0.15s infinite ease-in-out;
+    }
+    @keyframes type-code-1 {
+      0%, 100% { width: 0; }
+      15%, 85% { width: 4.5px; }
+    }
+    @keyframes type-code-2 {
+      0%, 20%, 100% { width: 0; }
+      35%, 85% { width: 5.5px; }
+    }
+    @keyframes type-code-3 {
+      0%, 40%, 100% { width: 0; }
+      55%, 85% { width: 3.5px; }
+    }
+    @keyframes type-code-4 {
+      0%, 60%, 100% { width: 0; }
+      75%, 85% { width: 5px; }
+    }
+    .code-line-1 {
+      animation: type-code-1 1.5s infinite steps(4, end);
+    }
+    .code-line-2 {
+      animation: type-code-2 1.5s infinite steps(5, end);
+    }
+    .code-line-3 {
+      animation: type-code-3 1.5s infinite steps(3, end);
+    }
+    .code-line-4 {
+      animation: type-code-4 1.5s infinite steps(5, end);
+    }
+  </style>
+  <g transform="translate(1.5, 3)" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)">
     <!-- Base Body & Head Outlines (Sticker effect) -->
     <path d="M 9.0 22.0 C 7.5 26.0 8.0 29.5 15.0 29.5 C 22.0 29.5 22.5 26.0 21.0 22.0 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" />
     <path d="M 8.0 18.0 C 6.5 12.0 8.5 7.8 15.0 7.2 C 21.5 6.6 23.5 11.5 22.0 17.5 C 20.8 22.0 19.5 22.2 15.0 22.0 C 10.5 21.8 9.2 22.0 8.0 18.0 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" />
-  
-    
-      <!-- Sprout hair strand outline -->
-      <path d="M 14.6 7.5 C 13.8 5.5 12.8 3.5 14.8 1.8 C 15.8 3.2 15.4 5.5 14.6 7.5 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.2" />
-    
+    <!-- Sprout hair strand outline -->
+    <path d="M 14.6 7.5 C 13.8 5.5 12.8 3.5 14.8 1.8 C 15.8 3.2 15.4 5.5 14.6 7.5 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.2" />
   </g>
 
   <g transform="translate(1.5, 3)">
-    
     <!-- Ears (Small asymmetrical flaps) -->
     <path d="M 7.2 14.0 C 5.5 14.0 5.5 16.5 7.2 16.5" fill="url(#skinGrad)" stroke="#1E1B18" stroke-width="0.8" />
     <path d="M 22.8 14.0 C 24.5 14.0 24.5 16.5 22.8 16.5" fill="url(#skinGrad)" stroke="#1E1B18" stroke-width="0.8" />
@@ -35,25 +74,52 @@
     <!-- Nose (Bulbous lumpy nose) -->
     <path d="M 14.0 13.2 Q 13.0 14.0 13.5 15.2 Q 14.8 16.5 16.0 15.0 Q 16.5 13.5 15.0 13.2" fill="url(#skinGrad)" stroke="#1E1B18" stroke-width="0.8" stroke-linejoin="round" />
   
+    <!-- Sprout hair strand -->
+    <path d="M 14.6 7.5 C 13.8 5.5 12.8 3.5 14.8 1.8 C 15.8 3.2 15.4 5.5 14.6 7.5 Z" fill="#1E1B18" stroke="#1E1B18" stroke-width="0.5" stroke-linejoin="round" />
     
-      <!-- Sprout hair strand -->
-      <path d="M 14.6 7.5 C 13.8 5.5 12.8 3.5 14.8 1.8 C 15.8 3.2 15.4 5.5 14.6 7.5 Z" fill="#1E1B18" stroke="#1E1B18" stroke-width="0.5" stroke-linejoin="round" />
-      
-      <!-- Eyes (Large round asymmetrical eyes with reflections) -->
-      <ellipse cx="12.0" cy="13.2" rx="1.8" ry="1.9" fill="#1E1B18" />
-      <circle cx="11.4" cy="12.5" r="0.5" fill="#ffffff" />
-      <circle cx="12.5" cy="13.8" r="0.25" fill="#ffffff" />
-      
-      <ellipse cx="18.0" cy="13.2" rx="1.8" ry="1.9" fill="#1E1B18" />
-      <circle cx="17.4" cy="12.5" r="0.5" fill="#ffffff" />
-      <circle cx="18.5" cy="13.8" r="0.25" fill="#ffffff" />
-
-      <!-- Smile (Wavy asymmetrical smile) -->
-      <path d="M 13.2 18.0 Q 15.0 19.5 16.8 18.0" fill="none" stroke="#1E1B18" stroke-width="0.8" stroke-linecap="round" />
-
-      <!-- Blush -->
-      <ellipse cx="9.2" cy="16.2" rx="1.2" ry="0.7" fill="#FFA3B1" />
-      <ellipse cx="20.8" cy="16.2" rx="1.2" ry="0.7" fill="#FFA3B1" />
+    <!-- Eyes (Large round asymmetrical eyes with reflections) -->
+    <ellipse cx="12.0" cy="13.2" rx="1.8" ry="1.9" fill="#1E1B18" />
+    <circle cx="11.4" cy="12.5" r="0.5" fill="#ffffff" />
+    <circle cx="12.5" cy="13.8" r="0.25" fill="#ffffff" />
     
+    <ellipse cx="18.0" cy="13.2" rx="1.8" ry="1.9" fill="#1E1B18" />
+    <circle cx="17.4" cy="12.5" r="0.5" fill="#ffffff" />
+    <circle cx="18.5" cy="13.8" r="0.25" fill="#ffffff" />
+
+    <!-- Smile (Wavy asymmetrical smile) -->
+    <path d="M 13.2 18.0 Q 15.0 19.5 16.8 18.0" fill="none" stroke="#1E1B18" stroke-width="0.8" stroke-linecap="round" />
+
+    <!-- Blush -->
+    <ellipse cx="9.2" cy="16.2" rx="1.2" ry="0.7" fill="#FFA3B1" />
+    <ellipse cx="20.8" cy="16.2" rx="1.2" ry="0.7" fill="#FFA3B1" />
+
+    <!-- Mini Keyboard -->
+    <rect x="9.5" y="25.5" width="11" height="2" rx="0.3" fill="#4B5563" stroke="#1E1B18" stroke-width="0.5" />
+    
+    <!-- Left Paw -->
+    <g class="left-paw">
+      <ellipse cx="11.5" cy="24.2" rx="1.2" ry="1.0" fill="url(#skinGrad)" stroke="#1E1B18" stroke-width="0.5" />
+    </g>
+    <!-- Right Paw -->
+    <g class="right-paw">
+      <ellipse cx="18.5" cy="24.2" rx="1.2" ry="1.0" fill="url(#skinGrad)" stroke="#1E1B18" stroke-width="0.5" />
+    </g>
+  </g>
+
+  <!-- CMD Window on the top right -->
+  <g class="cmd-window" filter="url(#shadow)">
+    <!-- Window Border/Screen -->
+    <rect x="22" y="3" width="8" height="6" rx="0.5" fill="#1e1e1e" stroke="#9ca3af" stroke-width="0.4" />
+    <!-- Top Bar -->
+    <rect x="22" y="3" width="8" height="1.2" rx="0.3" fill="#333333" />
+    <!-- Window buttons -->
+    <circle cx="23.0" cy="3.6" r="0.25" fill="#ef4444" />
+    <circle cx="23.7" cy="3.6" r="0.25" fill="#f59e0b" />
+    <circle cx="24.4" cy="3.6" r="0.25" fill="#10b981" />
+    <!-- Code Lines -->
+    <rect class="code-line-1" x="23" y="4.8" width="0" height="0.4" fill="#22c55e" />
+    <rect class="code-line-2" x="23" y="5.6" width="0" height="0.4" fill="#22c55e" />
+    <rect class="code-line-3" x="23" y="6.4" width="0" height="0.4" fill="#22c55e" />
+    <rect class="code-line-4" x="23" y="7.2" width="0" height="0.4" fill="#22c55e" />
   </g>
 </svg>

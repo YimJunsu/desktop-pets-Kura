@@ -21,17 +21,27 @@ const { registerClaudeHooks } = require('../hooks/claude-code');
 const { registerClaudeDesktopHooks } = require('../hooks/claude-desktop');
 const { registerAntigravityMcp } = require('../hooks/antigravity-mcp');
 
+const { execSync } = require('child_process');
+
+// Force-terminate any other running instances or zombie processes of this app on Windows (Packaged/Production only)
+try {
+  const myPid = process.pid;
+  const processName = path.basename(process.execPath, '.exe');
+  if (process.platform === 'win32' && processName.toLowerCase() !== 'electron') {
+    // Stop-Process -PassThru outputs the stopped process object, allowing Wait-Process to synchronously block until it fully exits
+    const killCmd = `powershell -Command "Get-Process -Name '${processName}' -ErrorAction SilentlyContinue | Where-Object { $_.Id -ne ${myPid} } | Stop-Process -Force -PassThru -ErrorAction SilentlyContinue | Wait-Process -Timeout 3 -ErrorAction SilentlyContinue"`;
+    execSync(killCmd, { stdio: 'ignore' });
+  }
+} catch (err) {
+  console.error('Failed to clean up duplicate instances:', err.message);
+}
+
 let isDuplicateInstance = false;
 
 // Single Instance Application Lock
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   isDuplicateInstance = true;
-  const { dialog } = require('electron');
-  dialog.showErrorBox(
-    'Kuro Desktop Pet',
-    '데스크탑 펫이 이미 소환되어 실행 중입니다! 🐾\n\n만약 화면에 펫이 보이지 않는다면, 윈도우 작업 표시줄 우측 하단의 트레이 영역(숨겨진 아이콘)에서 검은 고양이 아이콘을 우클릭하여 설정 창을 열거나 앱을 다시 껏다 켜 보시기 바랍니다.'
-  );
   app.quit();
   process.exit(0);
 }
@@ -83,8 +93,6 @@ function getWindowSize(sizeStr) {
 }
 
 function clampToScreen(x, y, width, height) {
-  const displays = screen.getAllDisplays();
-  
   // Determine pet size and offsets inside the window
   let petSize = 192;
   if (width === 300) petSize = 96;
@@ -96,45 +104,20 @@ function clampToScreen(x, y, width, height) {
   const petBottomInWindow = height - 20;
   const petTopInWindow = petBottomInWindow - petSize;
 
-  let isVisible = false;
-  // Check if the pet itself (not the window container) is on any display
-  for (const display of displays) {
-    const bounds = display.bounds;
-    const petX = x + petLeftInWindow;
-    const petY = y + petTopInWindow;
-    const intersects = (
-      petX < bounds.x + bounds.width &&
-      petX + petSize > bounds.x &&
-      petY < bounds.y + bounds.height &&
-      petY + petSize > bounds.y
-    );
-    if (intersects) {
-      isVisible = true;
-      break;
-    }
-  }
-
-  if (!isVisible) {
-    const primaryDisplay = screen.getPrimaryDisplay();
-    const bounds = primaryDisplay.workArea;
-    x = bounds.x + bounds.width - petRightInWindow - 20;
-    y = bounds.y + bounds.height - petBottomInWindow - 20;
-  } else {
-    const nearestDisplay = screen.getDisplayNearestPoint({
-      x: Math.round(x + width / 2),
-      y: Math.round(y + height / 2)
-    });
-    const bounds = nearestDisplay.workArea;
-    
-    // Clamp so the pet body stays within the display workArea, letting empty window space go offscreen
-    const minX = bounds.x - petLeftInWindow;
-    const maxX = bounds.x + bounds.width - petRightInWindow;
-    const minY = bounds.y - petTopInWindow;
-    const maxY = bounds.y + bounds.height - petBottomInWindow;
-    
-    x = Math.max(minX, Math.min(x, maxX));
-    y = Math.max(minY, Math.min(y, maxY));
-  }
+  const nearestDisplay = screen.getDisplayNearestPoint({
+    x: Math.round(x + width / 2),
+    y: Math.round(y + height / 2)
+  });
+  const bounds = nearestDisplay.workArea;
+  
+  // Clamp so the pet body stays within the display workArea, letting empty window space go offscreen
+  const minX = bounds.x - petLeftInWindow;
+  const maxX = bounds.x + bounds.width - petRightInWindow;
+  const minY = bounds.y - petTopInWindow;
+  const maxY = bounds.y + bounds.height - petBottomInWindow;
+  
+  x = Math.max(minX, Math.min(x, maxX));
+  y = Math.max(minY, Math.min(y, maxY));
   
   return { x: Math.round(x), y: Math.round(y) };
 }
@@ -443,6 +426,7 @@ function openSettingsWindow() {
     frame: false,
     resizable: false,
     hasShadow: false,
+    skipTaskbar: true, // Hide from taskbar and Alt-Tab switcher to prevent Alt-Tab ghosting
     icon: path.join(__dirname, '../../assets/tray-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, '../preload.js'),
@@ -467,7 +451,7 @@ ipcMain.handle('open-settings-window', () => {
 
 ipcMain.handle('close-settings-window', () => {
   if (settingsWindow && !settingsWindow.isDestroyed()) {
-    settingsWindow.close();
+    settingsWindow.destroy(); // Destroy immediately to prevent lingering Alt-Tab ghost entries
     settingsWindow = null;
   }
 });

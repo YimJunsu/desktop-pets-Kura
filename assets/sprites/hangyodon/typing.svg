@@ -12,8 +12,51 @@
       <stop offset="100%" stop-color="#F472B6" />
     </linearGradient>
   </defs>
-    <g transform="translate(1.5, 3)" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)">
-    
+  <style>
+    @keyframes type-left {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(1.2px); }
+    }
+    @keyframes type-right {
+      0%, 100% { transform: translateY(1.2px); }
+      50% { transform: translateY(0px); }
+    }
+    .left-paw {
+      animation: type-left 0.15s infinite ease-in-out;
+    }
+    .right-paw {
+      animation: type-right 0.15s infinite ease-in-out;
+    }
+    @keyframes type-code-1 {
+      0%, 100% { width: 0; }
+      15%, 85% { width: 4.5px; }
+    }
+    @keyframes type-code-2 {
+      0%, 20%, 100% { width: 0; }
+      35%, 85% { width: 5.5px; }
+    }
+    @keyframes type-code-3 {
+      0%, 40%, 100% { width: 0; }
+      55%, 85% { width: 3.5px; }
+    }
+    @keyframes type-code-4 {
+      0%, 60%, 100% { width: 0; }
+      75%, 85% { width: 5px; }
+    }
+    .code-line-1 {
+      animation: type-code-1 1.5s infinite steps(4, end);
+    }
+    .code-line-2 {
+      animation: type-code-2 1.5s infinite steps(5, end);
+    }
+    .code-line-3 {
+      animation: type-code-3 1.5s infinite steps(3, end);
+    }
+    .code-line-4 {
+      animation: type-code-4 1.5s infinite steps(5, end);
+    }
+  </style>
+  <g transform="translate(1.5, 3)" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)">
     <!-- Top Fin Outline -->
     <path d="M 12.0 7.5 C 11.5 4.0 13.5 2.5 15.0 3.5 C 16.2 2.0 18.5 2.5 19.0 5.0 C 19.8 4.5 21.0 5.0 20.2 7.5 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" />
     <!-- Side Fins Outline -->
@@ -21,21 +64,18 @@
     <path d="M 24.0 14.5 C 26.0 14.5 26.0 18.0 24.0 18.0 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" />
     <!-- Body Outline -->
     <ellipse cx="15" cy="22.5" rx="7.0" ry="5.5" fill="#ffffff" stroke="#ffffff" stroke-width="2.2" />
-    <!-- Head Outline (Bell shaped head, wide at bottom) -->
+    <!-- Head Outline -->
     <path d="M 7.0 18.0 C 6.5 10.0 9.0 7.0 15.0 6.5 C 21.0 7.0 23.5 10.0 23.0 18.0 C 22.8 22.0 20.0 23.0 15.0 23.0 C 10.0 23.0 7.2 22.0 7.0 18.0 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" />
-    <!-- Sayuri Outline (Pink Octopus) -->
+    <!-- Sayuri Outline -->
     <circle cx="24.0" cy="24.5" r="4.0" fill="#ffffff" stroke="#ffffff" stroke-width="2.2" />
-  
-    
   </g>
 
   <g transform="translate(1.5, 3)">
-    
-    <!-- Top Fin (Crest) -->
+    <!-- Top Fin -->
     <path d="M 12.0 7.5 C 11.5 4.0 13.5 2.5 15.0 3.5 C 16.2 2.0 18.5 2.5 19.0 5.0 C 19.8 4.5 21.0 5.0 20.2 7.5 Z" fill="url(#blueGrad)" stroke="#1E1B18" stroke-width="0.8" stroke-linejoin="round" />
     <path d="M 15.0 3.5 L 15.0 7.0 M 17.5 4.2 L 17.0 7.0" stroke="#1E1B18" stroke-width="0.6" stroke-linecap="round" />
 
-    <!-- Side Fins (Ears) -->
+    <!-- Side Fins -->
     <path d="M 6.0 14.5 C 4.5 14.5 4.5 18.0 6.0 18.0 Z" fill="url(#blueGrad)" stroke="#1E1B18" stroke-width="0.8" stroke-linejoin="round" />
     <line x1="4.5" y1="15.5" x2="6.0" y2="15.5" stroke="#1E1B18" stroke-width="0.6" />
     <line x1="4.5" y1="17.0" x2="6.0" y2="17.0" stroke="#1E1B18" stroke-width="0.6" />
@@ -47,42 +87,65 @@
     <!-- Body -->
     <ellipse cx="15" cy="22.5" rx="6.5" ry="5.0" fill="url(#blueGrad)" stroke="#1E1B18" stroke-width="0.8" />
     
-    <!-- Scales on chest (3 curly waves) -->
+    <!-- Scales on chest -->
     <path d="M 12.5 22.0 Q 13.5 23.0 14.5 22.0 M 15.5 22.0 Q 16.5 23.0 17.5 22.0 M 14.0 24.0 Q 15.0 25.0 16.0 24.0" fill="none" stroke="#1E1B18" stroke-width="0.8" stroke-linecap="round" />
 
-    <!-- Head (Bell shape) -->
+    <!-- Head -->
     <path d="M 7.0 18.0 C 6.5 10.0 9.0 7.0 15.0 6.5 C 21.0 7.0 23.5 10.0 23.0 18.0 C 22.8 22.0 20.0 23.0 15.0 23.0 C 10.0 23.0 7.2 22.0 7.0 18.0 Z" fill="url(#blueGrad)" stroke="#1E1B18" stroke-width="0.8" stroke-linejoin="round" />
 
-    <!-- Enormous White Eyes (Sitting exactly above the lips) -->
+    <!-- Enormous White Eyes -->
     <circle cx="10.8" cy="14.0" r="3.8" fill="#ffffff" stroke="#1E1B18" stroke-width="0.8" />
     <circle cx="19.2" cy="14.0" r="3.8" fill="#ffffff" stroke="#1E1B18" stroke-width="0.8" />
 
-    <!-- Big Pink Fish Lips (Wide hot-dog shape) -->
+    <!-- Big Pink Fish Lips -->
     <path d="M 7.5 18.5 C 7.5 17.0 22.5 17.0 22.5 18.5 C 22.5 20.0 7.5 20.0 7.5 18.5 Z" fill="url(#pinkGrad)" stroke="#1E1B18" stroke-width="0.8" stroke-linejoin="round" />
     <!-- Mouth Gap -->
     <path d="M 8.5 18.5 H 21.5" fill="none" stroke="#1E1B18" stroke-width="0.8" stroke-linecap="round" />
   
-    
-      <!-- Eyeballs (Looking straight) -->
-      <circle cx="11.5" cy="14.5" r="1.0" fill="#1E1B18" />
-      <circle cx="18.5" cy="14.5" r="1.0" fill="#1E1B18" />
+    <!-- Eyeballs -->
+    <circle cx="11.5" cy="14.5" r="1.0" fill="#1E1B18" />
+    <circle cx="18.5" cy="14.5" r="1.0" fill="#1E1B18" />
 
-      <!-- Stubby hands waving -->
-      <ellipse cx="8.5" cy="22.5" rx="1.0" ry="1.5" fill="url(#blueGrad)" stroke="#1E1B18" stroke-width="0.8" />
-      <ellipse cx="21.5" cy="22.5" rx="1.0" ry="1.5" fill="url(#blueGrad)" stroke="#1E1B18" stroke-width="0.8" />
-
-      <!-- Sayuri (Pink Octopus companion) -->
-      <!-- Body -->
-      <circle cx="25.0" cy="24.5" r="3.2" fill="url(#pinkGrad)" stroke="#1E1B18" stroke-width="0.8" />
-      <!-- Eyes & Mouth -->
-      <circle cx="24.2" cy="24.2" r="0.4" fill="#1E1B18" />
-      <circle cx="25.8" cy="24.2" r="0.4" fill="#1E1B18" />
-      <circle cx="25.0" cy="25.2" r="0.5" fill="#742A2A" stroke="#1E1B18" stroke-width="0.4" />
-      <!-- Legs -->
-      <path d="M 23.5 27.5 Q 24.0 28.5 24.5 27.5 M 25.5 27.5 Q 26.0 28.5 26.5 27.5" stroke="#1E1B18" stroke-width="0.6" fill="none" />
-      <!-- White Naruto/Fishcake on head -->
-      <circle cx="26.5" cy="22.2" r="0.8" fill="#ffffff" stroke="#1E1B18" stroke-width="0.4" />
-      <path d="M 26.5 21.8 Q 26.8 22.0 26.5 22.6" fill="none" stroke="#E53E3E" stroke-width="0.3" stroke-linecap="round" />
+    <!-- Keyboard -->
+    <rect x="9.5" y="25.5" width="11" height="2" rx="0.3" fill="#4B5563" stroke="#1E1B18" stroke-width="0.5" />
     
+    <!-- Left Paw -->
+    <g class="left-paw">
+      <ellipse cx="11.5" cy="24.2" rx="1.2" ry="1.0" fill="url(#blueGrad)" stroke="#1E1B18" stroke-width="0.5" />
+    </g>
+    <!-- Right Paw -->
+    <g class="right-paw">
+      <ellipse cx="18.5" cy="24.2" rx="1.2" ry="1.0" fill="url(#blueGrad)" stroke="#1E1B18" stroke-width="0.5" />
+    </g>
+
+    <!-- Sayuri -->
+    <!-- Body -->
+    <circle cx="25.0" cy="24.5" r="3.2" fill="url(#pinkGrad)" stroke="#1E1B18" stroke-width="0.8" />
+    <!-- Eyes & Mouth -->
+    <circle cx="24.2" cy="24.2" r="0.4" fill="#1E1B18" />
+    <circle cx="25.8" cy="24.2" r="0.4" fill="#1E1B18" />
+    <circle cx="25.0" cy="25.2" r="0.5" fill="#742A2A" stroke="#1E1B18" stroke-width="0.4" />
+    <!-- Legs -->
+    <path d="M 23.5 27.5 Q 24.0 28.5 24.5 27.5 M 25.5 27.5 Q 26.0 28.5 26.5 27.5" stroke="#1E1B18" stroke-width="0.6" fill="none" />
+    <!-- White Naruto/Fishcake on head -->
+    <circle cx="26.5" cy="22.2" r="0.8" fill="#ffffff" stroke="#1E1B18" stroke-width="0.4" />
+    <path d="M 26.5 21.8 Q 26.8 22.0 26.5 22.6" fill="none" stroke="#E53E3E" stroke-width="0.3" stroke-linecap="round" />
+  </g>
+
+  <!-- CMD Window on the top right -->
+  <g class="cmd-window" filter="url(#shadow)">
+    <!-- Window Border/Screen -->
+    <rect x="22" y="3" width="8" height="6" rx="0.5" fill="#1e1e1e" stroke="#9ca3af" stroke-width="0.4" />
+    <!-- Top Bar -->
+    <rect x="22" y="3" width="8" height="1.2" rx="0.3" fill="#333333" />
+    <!-- Window buttons -->
+    <circle cx="23.0" cy="3.6" r="0.25" fill="#ef4444" />
+    <circle cx="23.7" cy="3.6" r="0.25" fill="#f59e0b" />
+    <circle cx="24.4" cy="3.6" r="0.25" fill="#10b981" />
+    <!-- Code Lines -->
+    <rect class="code-line-1" x="23" y="4.8" width="0" height="0.4" fill="#22c55e" />
+    <rect class="code-line-2" x="23" y="5.6" width="0" height="0.4" fill="#22c55e" />
+    <rect class="code-line-3" x="23" y="6.4" width="0" height="0.4" fill="#22c55e" />
+    <rect class="code-line-4" x="23" y="7.2" width="0" height="0.4" fill="#22c55e" />
   </g>
 </svg>

@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/release-v1.0.1-8B5CF6?style=flat-square" alt="release" />
+  <img src="https://img.shields.io/badge/release-v1.0.2-8B5CF6?style=flat-square" alt="release" />
   <img src="https://img.shields.io/badge/platform-Windows-blue?style=flat-square" alt="platform" />
   <img src="https://img.shields.io/github/license/YimJunsu/desktop-pets-Kura?style=flat-square&color=FF7E5F" alt="license" />
   <img src="https://img.shields.io/github/stars/YimJunsu/desktop-pets-Kura?style=flat-square&color=FEB47B" alt="stars" />
@@ -29,14 +29,18 @@
 
 ## 🎭 The Pet Family
 
-Meet the five unique mascots available inside the control dashboard (⚙️). Each pet has a distinct appearance and automated chatbot personality.
+Meet the nine unique mascots available inside the control dashboard (⚙️). Each pet has a distinct appearance and automated chatbot personality.
 
 <p align="center">
-  <img src="assets/sprites/blackyang/happy.svg" width="80" height="80" alt="BlackYang" />
-  <img src="assets/sprites/cheeseyang/idle.svg" width="80" height="80" alt="CheeseYang" />
-  <img src="assets/sprites/raccoon/idle.svg" width="80" height="80" alt="Raccoon" />
-  <img src="assets/sprites/clawd/idle.svg" width="80" height="80" alt="Clawd" />
-  <img src="assets/sprites/oyajichi/idle.svg" width="80" height="80" alt="OyaJiChi" />
+  <img src="assets/sprites/blackyang/happy.svg" width="64" height="64" alt="BlackYang" />
+  <img src="assets/sprites/cheeseyang/idle.svg" width="64" height="64" alt="CheeseYang" />
+  <img src="assets/sprites/raccoon/idle.svg" width="64" height="64" alt="Raccoon" />
+  <img src="assets/sprites/clawd/idle.svg" width="64" height="64" alt="Clawd" />
+  <img src="assets/sprites/oyajichi/idle.svg" width="64" height="64" alt="OyaJiChi" />
+  <img src="assets/sprites/momongga/idle.png" width="64" height="64" alt="Momongga" />
+  <img src="assets/sprites/maenggu/idle.png" width="64" height="64" alt="Maenggu" />
+  <img src="assets/sprites/bbangbbang/idle.svg" width="64" height="64" alt="Bbangbbang" />
+  <img src="assets/sprites/hangyodon/idle.svg" width="64" height="64" alt="Hangyodon" />
 </p>
 
 1. **🐱 BlackYang (Kuro-chan)**: Our signature chibi black cat. Loves to wag its tail, and responds with cute cat slangs (`~nyan nyange🐾`).
@@ -44,6 +48,10 @@ Meet the five unique mascots available inside the control dashboard (⚙️). Ea
 3. **🦝 Raccoon (Kun)**: A mischievous critter that frantically bangs on a keyboard whenever you start typing in any program.
 4. **🐙 Clawd (Octopus)**: A friendly orange coral octopus that floats calmly, blinking and providing concise, positive coding responses.
 5. **👨‍🦳 OyaJiChi (Uncle)**: A funny, slightly grumbling middle-aged uncle with a bald head and thin mustache. Responds with dry, humorous uncle jokes.
+6. **🐿️ Momongga (Momonga)**: A cute, slightly spoiled white flying squirrel pet from *Chiikawa*. Loves praise and attention!
+7. **👦 Maenggu (Boo)**: A spaced-out boy pet with a runny nose from *Crayon Shin-chan*. Loves collecting pretty pebbles and stones.
+8. **🟢 Bbangbbang (빵빵이)**: A funny and hyperactive webtoon character in a green shirt. Loud, loud, and loudly expressive!
+9. **🐟 Hangyodon (한교동)**: A blue fish-man Sanrio pet with a pink octopus friend, Sayuri. Sensitive, friendly, and always dreaming of being a hero.
 
 ---
 
