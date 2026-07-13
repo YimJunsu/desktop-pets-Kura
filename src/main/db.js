@@ -51,6 +51,7 @@ const DEFAULT_SETTINGS = {
   followMode: 'false',
   sleepMode: 'false',
   typingReaction: 'true',
+  autoStart: 'true',
   position: 'null',
   geminiApiKey: '',
   model: 'clawd'

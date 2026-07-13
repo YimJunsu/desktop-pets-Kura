@@ -697,9 +697,16 @@
                 </label>
               </div>
               <div class="toggle-item">
-                <span>Typing Action (키보드 타자 반응)</span>
+                <span>타이핑 반응 (Typing React)</span>
                 <label class="switch">
                   <input type="checkbox" id="typing-toggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="toggle-item">
+                <span>부팅 시 자동 실행 (Auto Start)</span>
+                <label class="switch">
+                  <input type="checkbox" id="autostart-toggle">
                   <span class="slider"></span>
                 </label>
               </div>
@@ -829,6 +836,7 @@
       const followToggle = document.getElementById('follow-toggle');
       const sleepToggle = document.getElementById('sleep-toggle');
       const typingToggle = document.getElementById('typing-toggle');
+      const autoStartToggle = document.getElementById('autostart-toggle');
       const apiKeyInput = document.getElementById('api-key-input');
       const closeBtn = document.getElementById('close-modal-btn');
       const headerClose = document.getElementById('close-modal-btn-header');
@@ -894,6 +902,12 @@
       typingToggle.checked = settings.typingReaction !== 'false' && settings.typingReaction !== false;
       typingToggle.addEventListener('change', async () => {
         await window.api.updateSettings('typingReaction', typingToggle.checked);
+      });
+
+      // 2e. Auto Start Toggle
+      autoStartToggle.checked = settings.autoStart !== 'false' && settings.autoStart !== false;
+      autoStartToggle.addEventListener('change', async () => {
+        await window.api.updateSettings('autoStart', autoStartToggle.checked);
       });
 
       // 2e. Gemini API Key Input

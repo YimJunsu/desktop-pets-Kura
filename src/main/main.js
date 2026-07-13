@@ -271,6 +271,13 @@ ipcMain.handle('update-settings', async (event, key, value) => {
     }
   }
 
+  if (key === 'autoStart') {
+    app.setLoginItemSettings({
+      openAtLogin: String(value) === 'true',
+      path: app.getPath('exe')
+    });
+  }
+
   if (key === 'size') {
     const { width, height } = getWindowSize(value);
     if (mainWindow && !mainWindow.isDestroyed()) {
@@ -622,6 +629,13 @@ app.whenReady().then(async () => {
     // 2. Read settings from database
     settingsData = await getSettings();
     console.log('SQLite local database initialized successfully at:', dbPath);
+
+    // Apply auto start setting on boot
+    const shouldAutoStart = settingsData.autoStart !== 'false' && settingsData.autoStart !== false;
+    app.setLoginItemSettings({
+      openAtLogin: shouldAutoStart,
+      path: app.getPath('exe')
+    });
 
     // 3. Proactively correct registered MCP paths to external directory to bypass ASAR limitations
     try {
