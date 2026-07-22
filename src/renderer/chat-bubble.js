@@ -445,7 +445,41 @@ class ChatBubble {
   }
 
   showSystemMessage(text) {
-    this.show();
-    this.messagesDiv.innerHTML = `<div class="system-msg">${text}</div>`;
+    this.isVisible = true;
+    
+    // Dynamic height spacing depending on pet size setting (XS, S, M, L)
+    const petSize = this.renderer.settings.size || 'M';
+    let bottomOffset = 80 + 192 + 36;
+    if (petSize === 'XS') {
+      bottomOffset = 50 + 96 + 24;
+    } else if (petSize === 'S') {
+      bottomOffset = 65 + 128 + 30;
+    } else if (petSize === 'L') {
+      bottomOffset = 100 + 256 + 40;
+    }
+    this.container.style.bottom = `${bottomOffset}px`;
+
+    // Clear any existing auto-hide timeout
+    if (this.autoHideTimeout) {
+      clearTimeout(this.autoHideTimeout);
+      this.autoHideTimeout = null;
+    }
+
+    this.container.classList.remove('hidden');
+    this.inputArea.classList.add('hidden');
+    this.inputArea.classList.remove('visible');
+
+    setTimeout(() => {
+      this.container.classList.add('visible');
+    }, 10);
+
+    this.messagesDiv.innerHTML = `<div class="system-msg" style="text-align: center; font-weight: bold; color: #8B5CF6; line-height: 1.5;">${text}</div>`;
+
+    // Auto-hide the update/system bubble after 10 seconds
+    this.autoHideTimeout = setTimeout(() => {
+      this.hide();
+    }, 10000);
+    
+    this.renderer.stateMachine.resetInactivity();
   }
 }

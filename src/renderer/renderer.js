@@ -298,7 +298,7 @@ class PetRenderer {
         
         // Alert user via chat bubble speech
         if (this.chatBubble) {
-          this.chatBubble.showSystemMessage(`새로운 업데이트 버전 v${info.version}이 있습니다! 설정(⚙️)의 Updater 탭을 확인해 주세요. 🐾✨`);
+          this.chatBubble.showSystemMessage(`업데이트가 있어요! v${info.version} 버전이 준비되었습니다. 설정(⚙️)에서 확인해 주세요! 🐾✨`);
         }
       });
     }
