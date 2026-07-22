@@ -1,6 +1,6 @@
 {
   "name": "kuro-pet",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Claude Code Octopus Desktop Pet",
   "main": "src/main/main.js",
   "scripts": {
