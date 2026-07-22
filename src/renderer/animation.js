@@ -258,11 +258,19 @@ class Animator {
   setDirection(lookLeft, force = false) {
     this.lastLookLeft = lookLeft;
     
-    const isMomongga = this.renderer.settings.model === 'momongga';
-    const isWalkingOrRunning = this.currentAnimation === 'walk' || this.currentAnimation === 'run';
+    const model = this.renderer.settings.model || 'clawd';
+    const isMomongga = model === 'momongga';
+    const isMaenggu = model === 'maenggu';
+    const isWalkingOrRunning = this.currentAnimation === 'walk' || 
+                               this.currentAnimation === 'run' || 
+                               this.currentAnimation === 'walking' || 
+                               this.currentAnimation === 'following';
     
     let targetFlip = lookLeft;
-    if (isMomongga && isWalkingOrRunning) {
+    if (isMaenggu) {
+      // Maenggu's sprites naturally face right in all states, so always invert the flip
+      targetFlip = !lookLeft;
+    } else if (isMomongga && isWalkingOrRunning) {
       // Momonga naturally faces right in his walk/run sprites, so invert the flip compared to normal left-facing pets
       targetFlip = !lookLeft;
     }
